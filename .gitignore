@@ -1,0 +1,20 @@
+.env
+.env.production
+.vps-login.json
+releases/
+backups/
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+dist/
+.pytest_cache/
+.ruff_cache/
+uploads/
+
+.demo-credentials.json
+
+.tunnel-info.json
+
+# Temporary chart export workspaces
+.chart-data-*/

@@ -1,0 +1,8 @@
+FROM python:3.12-slim
+WORKDIR /app
+COPY --from=ghcr.io/astral-sh/uv:0.9.8 /uv /usr/local/bin/uv
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev
+ENV PATH="/app/.venv/bin:$PATH"
+COPY . .
+CMD ["fastapi", "run", "--host", "0.0.0.0", "--port", "8000"]

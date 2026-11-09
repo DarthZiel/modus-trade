@@ -1,0 +1,10 @@
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {finalizePresentation} from '/home/nurzhan/.codex/plugins/cache/openai-primary-runtime/presentations/26.1104.22356/skills/presentations/container_tools/artifact_tool_utils.mjs';
+const workspaceDir=process.cwd();
+const skill='/home/nurzhan/.codex/plugins/cache/openai-primary-runtime/presentations/26.1104.22356/skills/presentations';
+const referencePath=path.join(workspaceDir,'Grand_Support_Copilot_—_поддержка_на_максималках.pptx');
+const referenceSha256=createHash('sha256').update(await fs.readFile(referencePath)).digest('hex');
+const result=await finalizePresentation({workspaceDir,candidatePath:path.join(workspaceDir,'artifacts/pitch/.build/reference-candidate.pptx'),finalPath:path.join(workspaceDir,'artifacts/pitch/output/Modus-Feedback-Pitch-v2.pptx'),pythonExecutable:'/home/nurzhan/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3',integrityValidatorPath:path.join(skill,'container_tools/inspect_presentation_package_integrity.py'),layoutValidatorPath:path.join(skill,'container_tools/inspect_presentation_layout_geometry.py'),layoutArgs:['--expected-slide-size-emu','12192000,6858000','--validate-bullet-geometry','--validate-heading-fit'],requiredNativeChartOwnerSlides:[11],requiredNativeTableOwnerSlides:[],materializeLiteralChartWorkbooks:true,fontPolicy:{basis:'reference',families:['Aptos'],referencePath,referenceSha256},verifyArtifactToolImport:true,receiptPath:path.join(workspaceDir,'artifacts/pitch/.build/validation-reference.json')});
+console.log(JSON.stringify(result));

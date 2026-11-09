@@ -1,0 +1,21 @@
+[project]
+name = "modus-backend"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi[standard]>=0.115,<1",
+  "sqlmodel>=0.0.24,<0.1",
+  "psycopg[binary]>=3.2,<4",
+  "alembic>=1.15,<2",
+  "starlette>=1.10,<2",
+  "pillow>=12,<14",
+  "pwdlib[argon2]>=0.2,<1",
+  "pydantic-settings>=2.8,<3",
+  "openai>=2,<3",
+]
+
+[tool.fastapi]
+entrypoint = "app.main:app"
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "httpx>=0.28,<1"]

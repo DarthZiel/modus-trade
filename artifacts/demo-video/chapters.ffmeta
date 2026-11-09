@@ -1,0 +1,94 @@
+;FFMETADATA1
+title=Модус Трейд · Фидбек — полный цикл предложения
+artist=Modus Feedback
+comment=Демонстрационные данные. Русская синтетическая озвучка.
+[CHAPTER]
+TIMEBASE=1/1000
+START=0
+END=13332
+title=Модус Трейд · Фидбек
+[CHAPTER]
+TIMEBASE=1/1000
+START=13332
+END=27342
+title=Предложение сотрудника
+[CHAPTER]
+TIMEBASE=1/1000
+START=27342
+END=41323
+title=Проверка перед отправкой
+[CHAPTER]
+TIMEBASE=1/1000
+START=41323
+END=56271
+title=Предложение принято
+[CHAPTER]
+TIMEBASE=1/1000
+START=56271
+END=71287
+title=Предложение в очереди
+[CHAPTER]
+TIMEBASE=1/1000
+START=71287
+END=87512
+title=Ответственный и срок
+[CHAPTER]
+TIMEBASE=1/1000
+START=87512
+END=103108
+title=Принятие в работу
+[CHAPTER]
+TIMEBASE=1/1000
+START=103108
+END=116905
+title=Обсуждение в карточке
+[CHAPTER]
+TIMEBASE=1/1000
+START=116905
+END=133807
+title=План небольшой проверки
+[CHAPTER]
+TIMEBASE=1/1000
+START=133808
+END=150643
+title=Эксперимент запущен
+[CHAPTER]
+TIMEBASE=1/1000
+START=150642
+END=169015
+title=Фиксация наблюдений
+[CHAPTER]
+TIMEBASE=1/1000
+START=169016
+END=187815
+title=Итог эксперимента
+[CHAPTER]
+TIMEBASE=1/1000
+START=187814
+END=203681
+title=Решение по предложению
+[CHAPTER]
+TIMEBASE=1/1000
+START=203682
+END=219230
+title=Ожидание подтверждения
+[CHAPTER]
+TIMEBASE=1/1000
+START=219230
+END=233501
+title=Автор получает обновление
+[CHAPTER]
+TIMEBASE=1/1000
+START=233501
+END=250800
+title=Результат оценивает автор
+[CHAPTER]
+TIMEBASE=1/1000
+START=250800
+END=265545
+title=Предложение закрыто
+[CHAPTER]
+TIMEBASE=1/1000
+START=265545
+END=283715
+title=От идеи — к проверенному изменению

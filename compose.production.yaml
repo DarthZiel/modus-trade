@@ -1,0 +1,126 @@
+name: irontech-production
+
+x-runtime: &runtime
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: 10m
+      max-file: '3'
+
+x-backend-env: &backend-env
+  DB_HOST: db
+  DB_USER: ${POSTGRES_USER:-modus}
+  DB_PASSWORD: ${POSTGRES_PASSWORD:?Set a production database password}
+  DB_NAME: ${POSTGRES_DB:-modus}
+
+services:
+  caddy:
+    <<: *runtime
+    image: caddy:2-alpine
+    mem_limit: 96m
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL:?Set certificate contact email}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+      frontend:
+        condition: service_started
+      landing:
+        condition: service_started
+  landing:
+    <<: *runtime
+    image: irontech-landing:${LANDING_RELEASE_TAG:-${RELEASE_TAG:-v1}}
+    mem_limit: 32m
+  frontend:
+    <<: *runtime
+    image: irontech-frontend:${RELEASE_TAG:-v1}
+    mem_limit: 48m
+    depends_on:
+      backend:
+        condition: service_healthy
+  db:
+    <<: *runtime
+    image: postgres:17-alpine
+    mem_limit: 384m
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-modus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set a production database password}
+      POSTGRES_DB: ${POSTGRES_DB:-modus}
+    command: [postgres, -c, shared_buffers=96MB, -c, max_connections=40]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  backend:
+    <<: *runtime
+    image: irontech-backend:${RELEASE_TAG:-v1}
+    mem_limit: 512m
+    environment:
+      <<: *backend-env
+      COOKIE_SECURE: 'true'
+      MINI_APP_URL: https://feedback.iron-tech.kz
+      UPLOAD_DIR: /app/uploads
+      BOT_TOKEN: ${BOT_TOKEN:-}
+      BOT_API_SECRET: ${BOT_API_SECRET:-}
+      BOT_USERNAME: ${BOT_USERNAME:-}
+      AI_PROVIDER: ${AI_PROVIDER:-disabled}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-}
+      OPENROUTER_EXPERIMENT_MODEL: ${OPENROUTER_EXPERIMENT_MODEL:-}
+      OPENROUTER_OUTPUT_MODE: ${OPENROUTER_OUTPUT_MODE:-schema}
+      AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-20}
+      AI_MAX_OUTPUT_TOKENS: ${AI_MAX_OUTPUT_TOKENS:-2500}
+    volumes:
+      - uploads_data:/app/uploads
+    command: [sh, -c, 'alembic upgrade head && exec uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 1 --proxy-headers --forwarded-allow-ips="*"']
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+  reminders:
+    <<: *runtime
+    image: irontech-backend:${RELEASE_TAG:-v1}
+    mem_limit: 128m
+    environment: *backend-env
+    command: [python, -m, app.reminders]
+    depends_on:
+      backend:
+        condition: service_healthy
+  bot:
+    <<: *runtime
+    image: irontech-bot:${RELEASE_TAG:-v1}
+    profiles: [bot]
+    mem_limit: 256m
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN:-}
+      BOT_API_SECRET: ${BOT_API_SECRET:-}
+      MINI_APP_URL: https://feedback.iron-tech.kz
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  uploads_data:
+  caddy_data:
+  caddy_config:

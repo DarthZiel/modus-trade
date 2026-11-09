@@ -1,0 +1,13 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 0
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Golos Text,27,&H00FFFFFF,&H00FFFFFF,&H00171D23,&H00171D23,0,0,0,0,100,100,0,0,1,2,0,2,100,100,20,1
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.40,0:00:05.24,Default,,0,0,0,,{\fad(100,100)}Координатор выбирает ответственного и устанавливает дату следующего ответа.
+Dialogue: 0,0:00:05.24,0:00:11.43,Default,,0,0,0,,{\fad(100,100)}Комментарий объясняет задачу: проверить крупные ярлыки на одной полке и запросить оценку автора.
+Dialogue: 0,0:00:11.43,0:00:15.43,Default,,0,0,0,,{\fad(100,100)}Назначение и срок сохраняются в истории и доступны сотруднику.

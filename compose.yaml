@@ -1,0 +1,84 @@
+name: modus-feedback
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-modus}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-modus_local}
+      POSTGRES_DB: ${POSTGRES_DB:-modus}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  backend:
+    build: ./backend
+    environment:
+      AI_PROVIDER: ${AI_PROVIDER:-disabled}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-}
+      OPENROUTER_EXPERIMENT_MODEL: ${OPENROUTER_EXPERIMENT_MODEL:-}
+      OPENROUTER_OUTPUT_MODE: ${OPENROUTER_OUTPUT_MODE:-schema}
+      AI_TIMEOUT_SECONDS: ${AI_TIMEOUT_SECONDS:-20}
+      AI_MAX_OUTPUT_TOKENS: ${AI_MAX_OUTPUT_TOKENS:-2500}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      BOT_TOKEN: ${BOT_TOKEN:-}
+      BOT_API_SECRET: ${BOT_API_SECRET:-}
+      BOT_USERNAME: ${BOT_USERNAME:-}
+      MINI_APP_URL: ${MINI_APP_URL:-}
+      UPLOAD_DIR: /app/uploads
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      DB_HOST: db
+      DB_USER: ${POSTGRES_USER:-modus}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-modus_local}
+      DB_NAME: ${POSTGRES_DB:-modus}
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c 'alembic upgrade head && fastapi run --host 0.0.0.0 --port 8000'
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  reminders:
+    build: ./backend
+    environment:
+      DB_HOST: db
+      DB_USER: ${POSTGRES_USER:-modus}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-modus_local}
+      DB_NAME: ${POSTGRES_DB:-modus}
+    command: python -m app.reminders
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:${WEB_PORT:-5173}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+  bot:
+    profiles: [bot]
+    build: ./bot
+    environment:
+      BOT_TOKEN: ${BOT_TOKEN:-}
+      BOT_API_SECRET: ${BOT_API_SECRET:-}
+      MINI_APP_URL: ${MINI_APP_URL:-}
+      BACKEND_URL: http://backend:8000
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+volumes:
+  postgres_data:
+  uploads_data:

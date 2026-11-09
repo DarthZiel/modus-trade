@@ -1,0 +1,730 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-08T15:17:47.569358+00:00",
+  "title": "Design System: Iron Tech",
+  "extensions": {
+    "colorMeta": {
+      "background": {
+        "role": "neutral",
+        "displayName": "Background",
+        "tonalRamp": [
+          "oklch(15% 0.0023 106.52)",
+          "oklch(27% 0.0043 106.52)",
+          "oklch(39% 0.0056 106.52)",
+          "oklch(51% 0.0066 106.52)",
+          "oklch(63% 0.0066 106.52)",
+          "oklch(75% 0.0053 106.52)",
+          "oklch(87% 0.0030 106.52)",
+          "oklch(95% 0.0013 106.52)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Foreground",
+        "tonalRamp": [
+          "oklch(15% 0.0020 156.79)",
+          "oklch(27% 0.0037 156.79)",
+          "oklch(39% 0.0049 156.79)",
+          "oklch(51% 0.0058 156.79)",
+          "oklch(63% 0.0058 156.79)",
+          "oklch(75% 0.0046 156.79)",
+          "oklch(87% 0.0026 156.79)",
+          "oklch(95% 0.0012 156.79)"
+        ]
+      },
+      "primary": {
+        "role": "primary",
+        "displayName": "Primary",
+        "tonalRamp": [
+          "oklch(15% 0.0801 264.98)",
+          "oklch(27% 0.1487 264.98)",
+          "oklch(39% 0.1945 264.98)",
+          "oklch(51% 0.2288 264.98)",
+          "oklch(63% 0.2288 264.98)",
+          "oklch(75% 0.1831 264.98)",
+          "oklch(87% 0.1030 264.98)",
+          "oklch(95% 0.0458 264.98)"
+        ]
+      },
+      "primary-foreground": {
+        "role": "tertiary",
+        "displayName": "Primary Foreground",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.88)",
+          "oklch(27% 0.0000 89.88)",
+          "oklch(39% 0.0000 89.88)",
+          "oklch(51% 0.0000 89.88)",
+          "oklch(63% 0.0000 89.88)",
+          "oklch(75% 0.0000 89.88)",
+          "oklch(87% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
+        ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0033 113.17)",
+          "oklch(27% 0.0061 113.17)",
+          "oklch(39% 0.0080 113.17)",
+          "oklch(51% 0.0094 113.17)",
+          "oklch(63% 0.0094 113.17)",
+          "oklch(75% 0.0075 113.17)",
+          "oklch(87% 0.0042 113.17)",
+          "oklch(95% 0.0019 113.17)"
+        ]
+      },
+      "muted-foreground": {
+        "role": "neutral",
+        "displayName": "Muted Foreground",
+        "tonalRamp": [
+          "oklch(15% 0.0042 131.47)",
+          "oklch(27% 0.0078 131.47)",
+          "oklch(39% 0.0101 131.47)",
+          "oklch(51% 0.0119 131.47)",
+          "oklch(63% 0.0119 131.47)",
+          "oklch(75% 0.0096 131.47)",
+          "oklch(87% 0.0054 131.47)",
+          "oklch(95% 0.0024 131.47)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border",
+        "tonalRamp": [
+          "oklch(15% 0.0043 116.84)",
+          "oklch(27% 0.0080 116.84)",
+          "oklch(39% 0.0105 116.84)",
+          "oklch(51% 0.0124 116.84)",
+          "oklch(63% 0.0124 116.84)",
+          "oklch(75% 0.0099 116.84)",
+          "oklch(87% 0.0056 116.84)",
+          "oklch(95% 0.0025 116.84)"
+        ]
+      },
+      "available": {
+        "role": "tertiary",
+        "displayName": "Available",
+        "tonalRamp": [
+          "oklch(15% 0.0273 155.12)",
+          "oklch(27% 0.0507 155.12)",
+          "oklch(39% 0.0662 155.12)",
+          "oklch(51% 0.0779 155.12)",
+          "oklch(63% 0.0779 155.12)",
+          "oklch(75% 0.0623 155.12)",
+          "oklch(87% 0.0351 155.12)",
+          "oklch(95% 0.0156 155.12)"
+        ]
+      },
+      "body-muted": {
+        "role": "tertiary",
+        "displayName": "Body Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0049 133.49)",
+          "oklch(27% 0.0092 133.49)",
+          "oklch(39% 0.0120 133.49)",
+          "oklch(51% 0.0141 133.49)",
+          "oklch(63% 0.0141 133.49)",
+          "oklch(75% 0.0113 133.49)",
+          "oklch(87% 0.0063 133.49)",
+          "oklch(95% 0.0028 133.49)"
+        ]
+      },
+      "portfolio": {
+        "role": "neutral",
+        "displayName": "Portfolio",
+        "tonalRamp": [
+          "oklch(15% 0.0040 156.29)",
+          "oklch(27% 0.0075 156.29)",
+          "oklch(39% 0.0098 156.29)",
+          "oklch(51% 0.0115 156.29)",
+          "oklch(63% 0.0115 156.29)",
+          "oklch(75% 0.0092 156.29)",
+          "oklch(87% 0.0052 156.29)",
+          "oklch(95% 0.0023 156.29)"
+        ]
+      },
+      "portfolio-border": {
+        "role": "neutral",
+        "displayName": "Portfolio Border",
+        "tonalRamp": [
+          "oklch(15% 0.0062 142.14)",
+          "oklch(27% 0.0114 142.14)",
+          "oklch(39% 0.0150 142.14)",
+          "oklch(51% 0.0176 142.14)",
+          "oklch(63% 0.0176 142.14)",
+          "oklch(75% 0.0141 142.14)",
+          "oklch(87% 0.0079 142.14)",
+          "oklch(95% 0.0035 142.14)"
+        ]
+      },
+      "portfolio-muted": {
+        "role": "neutral",
+        "displayName": "Portfolio Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0056 145.42)",
+          "oklch(27% 0.0104 145.42)",
+          "oklch(39% 0.0136 145.42)",
+          "oklch(51% 0.0160 145.42)",
+          "oklch(63% 0.0160 145.42)",
+          "oklch(75% 0.0128 145.42)",
+          "oklch(87% 0.0072 145.42)",
+          "oklch(95% 0.0032 145.42)"
+        ]
+      },
+      "chess-paper": {
+        "role": "tertiary",
+        "displayName": "Chess Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0130 132.67)",
+          "oklch(27% 0.0241 132.67)",
+          "oklch(39% 0.0315 132.67)",
+          "oklch(51% 0.0370 132.67)",
+          "oklch(63% 0.0370 132.67)",
+          "oklch(75% 0.0296 132.67)",
+          "oklch(87% 0.0167 132.67)",
+          "oklch(95% 0.0074 132.67)"
+        ]
+      },
+      "chess-ink": {
+        "role": "tertiary",
+        "displayName": "Chess Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0131 144.62)",
+          "oklch(27% 0.0243 144.62)",
+          "oklch(39% 0.0317 144.62)",
+          "oklch(51% 0.0373 144.62)",
+          "oklch(63% 0.0373 144.62)",
+          "oklch(75% 0.0299 144.62)",
+          "oklch(87% 0.0168 144.62)",
+          "oklch(95% 0.0075 144.62)"
+        ]
+      },
+      "chess-border": {
+        "role": "tertiary",
+        "displayName": "Chess Border",
+        "tonalRamp": [
+          "oklch(15% 0.0153 132.66)",
+          "oklch(27% 0.0285 132.66)",
+          "oklch(39% 0.0372 132.66)",
+          "oklch(51% 0.0438 132.66)",
+          "oklch(63% 0.0438 132.66)",
+          "oklch(75% 0.0350 132.66)",
+          "oklch(87% 0.0197 132.66)",
+          "oklch(95% 0.0088 132.66)"
+        ]
+      },
+      "chess-accent": {
+        "role": "tertiary",
+        "displayName": "Chess Accent",
+        "tonalRamp": [
+          "oklch(15% 0.0262 134.93)",
+          "oklch(27% 0.0486 134.93)",
+          "oklch(39% 0.0636 134.93)",
+          "oklch(51% 0.0748 134.93)",
+          "oklch(63% 0.0748 134.93)",
+          "oklch(75% 0.0599 134.93)",
+          "oklch(87% 0.0337 134.93)",
+          "oklch(95% 0.0150 134.93)"
+        ]
+      },
+      "chess-muted": {
+        "role": "tertiary",
+        "displayName": "Chess Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0142 134.81)",
+          "oklch(27% 0.0263 134.81)",
+          "oklch(39% 0.0344 134.81)",
+          "oklch(51% 0.0405 134.81)",
+          "oklch(63% 0.0405 134.81)",
+          "oklch(75% 0.0324 134.81)",
+          "oklch(87% 0.0182 134.81)",
+          "oklch(95% 0.0081 134.81)"
+        ]
+      },
+      "chess-board-bg": {
+        "role": "tertiary",
+        "displayName": "Chess Board Bg",
+        "tonalRamp": [
+          "oklch(15% 0.0172 131.93)",
+          "oklch(27% 0.0320 131.93)",
+          "oklch(39% 0.0418 131.93)",
+          "oklch(51% 0.0492 131.93)",
+          "oklch(63% 0.0492 131.93)",
+          "oklch(75% 0.0393 131.93)",
+          "oklch(87% 0.0221 131.93)",
+          "oklch(95% 0.0098 131.93)"
+        ]
+      },
+      "chess-square": {
+        "role": "tertiary",
+        "displayName": "Chess Square",
+        "tonalRamp": [
+          "oklch(15% 0.0252 132.61)",
+          "oklch(27% 0.0468 132.61)",
+          "oklch(39% 0.0611 132.61)",
+          "oklch(51% 0.0719 132.61)",
+          "oklch(63% 0.0719 132.61)",
+          "oklch(75% 0.0575 132.61)",
+          "oklch(87% 0.0324 132.61)",
+          "oklch(95% 0.0144 132.61)"
+        ]
+      },
+      "chess-square-pale": {
+        "role": "tertiary",
+        "displayName": "Chess Square Pale",
+        "tonalRamp": [
+          "oklch(15% 0.0087 124.27)",
+          "oklch(27% 0.0162 124.27)",
+          "oklch(39% 0.0212 124.27)",
+          "oklch(51% 0.0250 124.27)",
+          "oklch(63% 0.0250 124.27)",
+          "oklch(75% 0.0200 124.27)",
+          "oklch(87% 0.0112 124.27)",
+          "oklch(95% 0.0050 124.27)"
+        ]
+      },
+      "chess-piece": {
+        "role": "tertiary",
+        "displayName": "Chess Piece",
+        "tonalRamp": [
+          "oklch(15% 0.0170 143.38)",
+          "oklch(27% 0.0315 143.38)",
+          "oklch(39% 0.0413 143.38)",
+          "oklch(51% 0.0485 143.38)",
+          "oklch(63% 0.0485 143.38)",
+          "oklch(75% 0.0388 143.38)",
+          "oklch(87% 0.0218 143.38)",
+          "oklch(95% 0.0097 143.38)"
+        ]
+      },
+      "chess-caption": {
+        "role": "tertiary",
+        "displayName": "Chess Caption",
+        "tonalRamp": [
+          "oklch(15% 0.0191 133.85)",
+          "oklch(27% 0.0354 133.85)",
+          "oklch(39% 0.0463 133.85)",
+          "oklch(51% 0.0545 133.85)",
+          "oklch(63% 0.0545 133.85)",
+          "oklch(75% 0.0436 133.85)",
+          "oklch(87% 0.0245 133.85)",
+          "oklch(95% 0.0109 133.85)"
+        ]
+      },
+      "intech-paper": {
+        "role": "tertiary",
+        "displayName": "Intech Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0028 114.23)",
+          "oklch(27% 0.0053 114.23)",
+          "oklch(39% 0.0069 114.23)",
+          "oklch(51% 0.0081 114.23)",
+          "oklch(63% 0.0081 114.23)",
+          "oklch(75% 0.0065 114.23)",
+          "oklch(87% 0.0036 114.23)",
+          "oklch(95% 0.0016 114.23)"
+        ]
+      },
+      "intech-ink": {
+        "role": "tertiary",
+        "displayName": "Intech Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0046 154.49)",
+          "oklch(27% 0.0085 154.49)",
+          "oklch(39% 0.0111 154.49)",
+          "oklch(51% 0.0131 154.49)",
+          "oklch(63% 0.0131 154.49)",
+          "oklch(75% 0.0104 154.49)",
+          "oklch(87% 0.0059 154.49)",
+          "oklch(95% 0.0026 154.49)"
+        ]
+      },
+      "intech-orange": {
+        "role": "tertiary",
+        "displayName": "Intech Orange",
+        "tonalRamp": [
+          "oklch(15% 0.0512 51.94)",
+          "oklch(27% 0.0951 51.94)",
+          "oklch(39% 0.1244 51.94)",
+          "oklch(51% 0.1463 51.94)",
+          "oklch(63% 0.1463 51.94)",
+          "oklch(75% 0.1171 51.94)",
+          "oklch(87% 0.0659 51.94)",
+          "oklch(95% 0.0293 51.94)"
+        ]
+      },
+      "nord-blue": {
+        "role": "tertiary",
+        "displayName": "Nord Blue",
+        "tonalRamp": [
+          "oklch(15% 0.0633 266.27)",
+          "oklch(27% 0.1175 266.27)",
+          "oklch(39% 0.1536 266.27)",
+          "oklch(51% 0.1807 266.27)",
+          "oklch(63% 0.1807 266.27)",
+          "oklch(75% 0.1446 266.27)",
+          "oklch(87% 0.0813 266.27)",
+          "oklch(95% 0.0361 266.27)"
+        ]
+      },
+      "nord-paper": {
+        "role": "tertiary",
+        "displayName": "Nord Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0057 274.82)",
+          "oklch(27% 0.0106 274.82)",
+          "oklch(39% 0.0139 274.82)",
+          "oklch(51% 0.0164 274.82)",
+          "oklch(63% 0.0164 274.82)",
+          "oklch(75% 0.0131 274.82)",
+          "oklch(87% 0.0074 274.82)",
+          "oklch(95% 0.0033 274.82)"
+        ]
+      },
+      "kazchess-gold": {
+        "role": "tertiary",
+        "displayName": "Kazchess Gold",
+        "tonalRamp": [
+          "oklch(15% 0.0448 75.60)",
+          "oklch(27% 0.0832 75.60)",
+          "oklch(39% 0.1088 75.60)",
+          "oklch(51% 0.1280 75.60)",
+          "oklch(63% 0.1280 75.60)",
+          "oklch(75% 0.1024 75.60)",
+          "oklch(87% 0.0576 75.60)",
+          "oklch(95% 0.0256 75.60)"
+        ]
+      },
+      "kazchess-ink": {
+        "role": "tertiary",
+        "displayName": "Kazchess Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0108 72.30)",
+          "oklch(27% 0.0201 72.30)",
+          "oklch(39% 0.0263 72.30)",
+          "oklch(51% 0.0310 72.30)",
+          "oklch(63% 0.0310 72.30)",
+          "oklch(75% 0.0248 72.30)",
+          "oklch(87% 0.0139 72.30)",
+          "oklch(95% 0.0062 72.30)"
+        ]
+      },
+      "kazchess-border": {
+        "role": "tertiary",
+        "displayName": "Kazchess Border",
+        "tonalRamp": [
+          "oklch(15% 0.0305 76.31)",
+          "oklch(27% 0.0566 76.31)",
+          "oklch(39% 0.0740 76.31)",
+          "oklch(51% 0.0871 76.31)",
+          "oklch(63% 0.0871 76.31)",
+          "oklch(75% 0.0696 76.31)",
+          "oklch(87% 0.0392 76.31)",
+          "oklch(95% 0.0174 76.31)"
+        ]
+      },
+      "water-paper": {
+        "role": "tertiary",
+        "displayName": "Water Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0039 211.04)",
+          "oklch(27% 0.0072 211.04)",
+          "oklch(39% 0.0094 211.04)",
+          "oklch(51% 0.0111 211.04)",
+          "oklch(63% 0.0111 211.04)",
+          "oklch(75% 0.0089 211.04)",
+          "oklch(87% 0.0050 211.04)",
+          "oklch(95% 0.0022 211.04)"
+        ]
+      },
+      "water-ink": {
+        "role": "tertiary",
+        "displayName": "Water Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0139 221.30)",
+          "oklch(27% 0.0258 221.30)",
+          "oklch(39% 0.0337 221.30)",
+          "oklch(51% 0.0396 221.30)",
+          "oklch(63% 0.0396 221.30)",
+          "oklch(75% 0.0317 221.30)",
+          "oklch(87% 0.0178 221.30)",
+          "oklch(95% 0.0079 221.30)"
+        ]
+      },
+      "water-mark": {
+        "role": "tertiary",
+        "displayName": "Water Mark",
+        "tonalRamp": [
+          "oklch(15% 0.0111 212.09)",
+          "oklch(27% 0.0206 212.09)",
+          "oklch(39% 0.0269 212.09)",
+          "oklch(51% 0.0317 212.09)",
+          "oklch(63% 0.0317 212.09)",
+          "oklch(75% 0.0253 212.09)",
+          "oklch(87% 0.0143 212.09)",
+          "oklch(95% 0.0063 212.09)"
+        ]
+      },
+      "feedback-paper": {
+        "role": "tertiary",
+        "displayName": "Feedback Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0030 84.57)",
+          "oklch(27% 0.0056 84.57)",
+          "oklch(39% 0.0073 84.57)",
+          "oklch(51% 0.0086 84.57)",
+          "oklch(63% 0.0086 84.57)",
+          "oklch(75% 0.0069 84.57)",
+          "oklch(87% 0.0039 84.57)",
+          "oklch(95% 0.0017 84.57)"
+        ]
+      },
+      "feedback-ink": {
+        "role": "tertiary",
+        "displayName": "Feedback Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0043 135.05)",
+          "oklch(27% 0.0080 135.05)",
+          "oklch(39% 0.0104 135.05)",
+          "oklch(51% 0.0123 135.05)",
+          "oklch(63% 0.0123 135.05)",
+          "oklch(75% 0.0098 135.05)",
+          "oklch(87% 0.0055 135.05)",
+          "oklch(95% 0.0025 135.05)"
+        ]
+      },
+      "feedback-rust": {
+        "role": "tertiary",
+        "displayName": "Feedback Rust",
+        "tonalRamp": [
+          "oklch(15% 0.0562 37.45)",
+          "oklch(27% 0.1044 37.45)",
+          "oklch(39% 0.1365 37.45)",
+          "oklch(51% 0.1606 37.45)",
+          "oklch(63% 0.1606 37.45)",
+          "oklch(75% 0.1285 37.45)",
+          "oklch(87% 0.0723 37.45)",
+          "oklch(95% 0.0321 37.45)"
+        ]
+      },
+      "feedback-badge": {
+        "role": "tertiary",
+        "displayName": "Feedback Badge",
+        "tonalRamp": [
+          "oklch(15% 0.0045 86.83)",
+          "oklch(27% 0.0084 86.83)",
+          "oklch(39% 0.0110 86.83)",
+          "oklch(51% 0.0129 86.83)",
+          "oklch(63% 0.0129 86.83)",
+          "oklch(75% 0.0103 86.83)",
+          "oklch(87% 0.0058 86.83)",
+          "oklch(95% 0.0026 86.83)"
+        ]
+      },
+      "feedback-badge-ink": {
+        "role": "tertiary",
+        "displayName": "Feedback Badge Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0058 107.17)",
+          "oklch(27% 0.0107 107.17)",
+          "oklch(39% 0.0140 107.17)",
+          "oklch(51% 0.0165 107.17)",
+          "oklch(63% 0.0165 107.17)",
+          "oklch(75% 0.0132 107.17)",
+          "oklch(87% 0.0074 107.17)",
+          "oklch(95% 0.0033 107.17)"
+        ]
+      },
+      "service-arrow": {
+        "role": "tertiary",
+        "displayName": "Service Arrow",
+        "tonalRamp": [
+          "oklch(15% 0.0055 128.74)",
+          "oklch(27% 0.0103 128.74)",
+          "oklch(39% 0.0134 128.74)",
+          "oklch(51% 0.0158 128.74)",
+          "oklch(63% 0.0158 128.74)",
+          "oklch(75% 0.0127 128.74)",
+          "oklch(87% 0.0071 128.74)",
+          "oklch(95% 0.0032 128.74)"
+        ]
+      },
+      "team-copy": {
+        "role": "tertiary",
+        "displayName": "Team Copy",
+        "tonalRamp": [
+          "oklch(15% 0.0062 132.65)",
+          "oklch(27% 0.0115 132.65)",
+          "oklch(39% 0.0150 132.65)",
+          "oklch(51% 0.0176 132.65)",
+          "oklch(63% 0.0176 132.65)",
+          "oklch(75% 0.0141 132.65)",
+          "oklch(87% 0.0079 132.65)",
+          "oklch(95% 0.0035 132.65)"
+        ]
+      },
+      "chess-shadow": {
+        "role": "tertiary",
+        "displayName": "Chess Shadow",
+        "tonalRamp": [
+          "oklch(15% 0.0109 139.44)",
+          "oklch(27% 0.0203 139.44)",
+          "oklch(39% 0.0265 139.44)",
+          "oklch(51% 0.0312 139.44)",
+          "oklch(63% 0.0312 139.44)",
+          "oklch(75% 0.0250 139.44)",
+          "oklch(87% 0.0140 139.44)",
+          "oklch(95% 0.0062 139.44)"
+        ]
+      },
+      "menu-shadow": {
+        "role": "tertiary",
+        "displayName": "Menu Shadow",
+        "tonalRamp": [
+          "oklch(15% 0.0020 156.79)",
+          "oklch(27% 0.0037 156.79)",
+          "oklch(39% 0.0049 156.79)",
+          "oklch(51% 0.0058 156.79)",
+          "oklch(63% 0.0058 156.79)",
+          "oklch(75% 0.0046 156.79)",
+          "oklch(87% 0.0026 156.79)",
+          "oklch(95% 0.0012 156.79)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Cyrillic display",
+        "purpose": "Primary hero headline; mobile size is recorded in Layout and Typography."
+      },
+      "latin-title": {
+        "displayName": "Latin project title",
+        "purpose": "Intentional Geist companion for Latin identity and cover headings only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "chess-board",
+        "value": "0 18px 35px #24302125",
+        "purpose": "Decorative tilted chessboard."
+      },
+      {
+        "name": "mobile-navigation",
+        "value": "0 16px 32px #20232114",
+        "purpose": "Separate the open mobile menu from page content."
+      }
+    ],
+    "motion": [
+      {
+        "name": "press",
+        "value": "transform 140ms cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Button active scale .97."
+      },
+      {
+        "name": "color",
+        "value": "background-color 160ms ease",
+        "purpose": "Button hover."
+      },
+      {
+        "name": "arrow-arrive",
+        "value": "650ms cubic-bezier(0.23, 1, 0.32, 1)",
+        "purpose": "Single hero arrow entry from translate(-12px,12px), opacity .55."
+      },
+      {
+        "name": "project-hover",
+        "value": "filter 180ms ease",
+        "purpose": "Fine-pointer linked cover brightness 1.07."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Disable animation, transitions, smooth scrolling and active transform."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile-max",
+        "value": "760px"
+      },
+      {
+        "name": "tablet-max",
+        "value": "1100px"
+      },
+      {
+        "name": "wide-min",
+        "value": "1500px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary action",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Hero action linking to selected work.",
+      "html": "<a class=\"ds-primary\" href=\"#projects\">Смотреть проекты ↘</a>",
+      "css": ".ds-primary{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:6px;font:500 14px \"Golos Text Variable\",sans-serif;text-decoration:none;transition:transform 140ms cubic-bezier(.23,1,.32,1),background-color 160ms ease;height:54px;padding:0 25px;background:var(--primary,#2454e8);color:var(--primary-foreground,#fff);gap:28px}.ds-primary:hover{background:color-mix(in oklab,var(--primary,#2454e8) 80%,transparent)}.ds-primary:focus-visible{outline:3px solid var(--ring, #2454e8);outline-offset:5px;}.ds-primary:active{transform:scale(.97)}@media(prefers-reduced-motion:reduce){.ds-primary{transition:none}.ds-primary:active{transform:none}}"
+    },
+    {
+      "name": "Mobile menu control",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Outlined mobile navigation disclosure.",
+      "html": "<button class=\"ds-menu\" aria-label=\"Открыть меню\" aria-expanded=\"false\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M4 6h16M4 12h16M4 18h16\"/></svg></button>",
+      "css": ".ds-menu{display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:6px;font:500 14px \"Golos Text Variable\",sans-serif;text-decoration:none;transition:transform 140ms cubic-bezier(.23,1,.32,1),background-color 160ms ease;width:44px;height:44px;background:var(--background,#f5f5f0);color:var(--foreground,#202321);border-color:var(--border,#d5d7ce)}.ds-menu:hover,.ds-menu[aria-expanded=true]{background:var(--muted,#e9eae3)}.ds-menu:focus-visible{outline:3px solid var(--ring, #2454e8);outline-offset:5px;}.ds-menu:active{transform:scale(.97)}@media(prefers-reduced-motion:reduce){.ds-menu{transition:none}.ds-menu:active{transform:none}}"
+    },
+    {
+      "name": "Desktop navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "Text navigation with a restrained underline response.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#projects\">Проекты</a><a href=\"#expertise\">Услуги</a><a href=\"#team\">Команда</a></nav>",
+      "css": ".ds-nav{display:flex;gap:34px;font:14px \"Golos Text Variable\",sans-serif;color:var(--foreground,#202321)}.ds-nav a{color:inherit;text-decoration:none;text-underline-offset:5px}@media(hover:hover) and (pointer:fine){.ds-nav a:hover{text-decoration:underline}}.ds-nav a:focus-visible{outline:3px solid var(--ring, #2454e8);outline-offset:5px;}"
+    },
+    {
+      "name": "Chess platform badge",
+      "kind": "chip",
+      "refersTo": "badge-chess",
+      "description": "Static platform label in the featured project.",
+      "html": "<span class=\"ds-badge\">Десктоп · Android</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;height:25px;padding:0 10px;border:1px solid #7b8b70;border-radius:5px;color:#253625;font:400 11px \"Golos Text Variable\",sans-serif}"
+    },
+    {
+      "name": "Project cover",
+      "kind": "card",
+      "refersTo": "project-cover",
+      "description": "Graphic external project cover; typography rather than screenshots.",
+      "html": "<a class=\"ds-cover\" href=\"https://nord-auto.kz/\"><span>nord-auto.kz ↗</span><strong>NORD AUTO</strong><span>Автозапчасти</span></a>",
+      "css": ".ds-cover{display:flex;flex-direction:column;justify-content:space-between;height:285px;padding:28px;border-radius:12px;background:#294bbb;color:#f0f3ff;text-decoration:none;font:12px \"Golos Text Variable\",sans-serif;transition:filter 180ms ease}.ds-cover strong{font:italic 650 46px/1 \"Geist Variable\",sans-serif;letter-spacing:-.04em}@media(hover:hover) and (pointer:fine){.ds-cover:hover{filter:brightness(1.07)}}.ds-cover:focus-visible{outline:3px solid var(--ring, #2454e8);outline-offset:5px;}@media(prefers-reduced-motion:reduce){.ds-cover{transition:none}}"
+    },
+    {
+      "name": "Email contact",
+      "kind": "custom",
+      "refersTo": "navigation",
+      "description": "Prominent direct contact with an understated divider.",
+      "html": "<a class=\"ds-email\" href=\"mailto:studerzhan@gmail.com\">studerzhan@gmail.com ↗</a>",
+      "css": ".ds-email{display:flex;justify-content:space-between;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--border,#d5d7ce);color:var(--foreground,#202321);font:28px \"Golos Text Variable\",sans-serif;letter-spacing:-.025em;text-decoration:none;text-underline-offset:5px;overflow-wrap:anywhere}@media(hover:hover) and (pointer:fine){.ds-email:hover{text-decoration:underline}}.ds-email:focus-visible{outline:3px solid var(--ring, #2454e8);outline-offset:5px;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Editorial Project Catalogue",
+    "overview": "A warm-paper editorial portfolio: large Cyrillic typography, charcoal work galleries and precise blue wayfinding. The IT mark and directional arrows connect the company identity, project selection and contact invitation.\n\nProject covers retain their own restrained palettes. They are graphic interpretations, not product screenshots. This standalone site has its own design system, independent of the Modus Feedback application.",
+    "keyCharacteristics": [
+      "Large, compact headlines and generous section spacing.",
+      "Flat surfaces, quiet rules and distinct project cover colors.",
+      "Golos for Cyrillic; Geist reserved for Latin identity and cover titles."
+    ],
+    "rules": [],
+    "dos": [
+      "Do preserve the warm-paper / charcoal section rhythm.",
+      "Do use Golos Text for Russian copy and Geist only for Latin wordmarks and project cover titles.",
+      "Do retain visible keyboard focus and reduced-motion behavior."
+    ],
+    "donts": [
+      "Don't replace the distinct project cover palettes with one generic brand color.",
+      "Don't present decorative covers as application screenshots.",
+      "Don't add ambient shadows or continuous animation to flat content sections."
+    ]
+  }
+}
