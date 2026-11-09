@@ -660,6 +660,8 @@ button.primary:disabled:hover {
 }
 .appeal-status {
   font-size: 13px;
+  /* Badge sets h-5 + overflow-hidden; with .pill padding that clips the text. */
+  height: auto;
 }
 .status-needs_info,
 .status-awaiting_confirmation {
