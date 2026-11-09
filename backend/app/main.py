@@ -16,6 +16,8 @@ from app.discussion import router as discussion_router
 from app.experiments import router as experiments_router
 from app.feedback import router as feedback_router
 from app.notifications import router as notifications_router
+from app.similar import router as similar_router
+from app.metrics import router as metrics_router
 from app.telegram import internal as bot_router
 from app.telegram import router as telegram_router
 from app.uploads import MAX_BODY_SIZE
@@ -31,8 +33,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="Modus Feedback API", version="0.1.0", lifespan=lifespan)
 
 app.include_router(router)
+app.include_router(similar_router)
 app.include_router(appeals_router)
 app.include_router(work_router)
+app.include_router(metrics_router)
 app.include_router(discussion_router)
 app.include_router(feedback_router)
 app.include_router(notifications_router)

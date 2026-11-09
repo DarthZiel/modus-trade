@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     openrouter_model: str = ""
     openrouter_experiment_model: str = ""
     openrouter_output_mode: Literal["schema", "json", "prompt"] = "schema"
+    # Speech-to-text for Telegram voice messages (model must accept input_audio).
+    openrouter_audio_model: str = "google/gemini-2.5-flash"
     ai_timeout_seconds: float = Field(default=20, ge=1, le=120)
     ai_max_output_tokens: int = Field(default=2500, ge=256, le=16384)
     openai_api_key: SecretStr = SecretStr("")

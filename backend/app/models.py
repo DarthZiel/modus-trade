@@ -131,6 +131,18 @@ class AppealEvent(SQLModel, table=True):
     created_at: datetime = Field(default_factory=utcnow, sa_column=timestamp())
 
 
+class AppealSupporter(SQLModel, table=True):
+    """An employee who joined an existing appeal instead of filing a duplicate."""
+
+    __tablename__ = "appeal_supporters"
+    __table_args__ = (UniqueConstraint("appeal_id", "user_id"),)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    appeal_id: int = Field(foreign_key="appeals.id", index=True)
+    user_id: UUID = Field(foreign_key="users.id", index=True)
+    comment: str = Field(default="", max_length=1000)
+    created_at: datetime = Field(default_factory=utcnow, sa_column=timestamp())
+
+
 class AppealMessage(SQLModel, table=True):
     __tablename__ = "appeal_messages"
     __table_args__ = (UniqueConstraint("appeal_id", "sender_id", "client_id"),)

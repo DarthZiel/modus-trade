@@ -66,6 +66,7 @@ class AppealSummary(BaseModel):
     next_response_at: datetime | None
     created_at: datetime
     attachment_count: int
+    supporters: int = 0
 
 
 class FeedbackPublic(BaseModel):
@@ -74,6 +75,13 @@ class FeedbackPublic(BaseModel):
     comment: str
     result_snapshot: str
     author: str
+    created_at: datetime
+
+
+class SupporterPublic(BaseModel):
+    name: str
+    department: str
+    comment: str
     created_at: datetime
 
 
@@ -89,6 +97,7 @@ class AppealDetail(AppealSummary):
     attachments: list[AttachmentPublic]
     history: list[EventPublic]
     feedback: list[FeedbackPublic]
+    supporters_list: list[SupporterPublic] = []
 
 
 class AppealPage(BaseModel):

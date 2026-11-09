@@ -198,7 +198,10 @@ function QueueList({ user }: { user: User }) {
             </span>
           </p>
           <p className="queue-overview-note">
-            Обзор всей доступной очереди. Фильтры ниже меняют только список.
+            Обзор всей доступной очереди. Фильтры ниже меняют только список.{" "}
+            <a href="/impact" onClick={(event) => openLink(event, "/impact")}>
+              Эффект: что действительно помогло →
+            </a>
           </p>
         </section>
       )}
@@ -429,7 +432,17 @@ function QueueList({ user }: { user: User }) {
                                   </small>
                                   <strong>{item.title}</strong>
                                 </a>
-                                <small>{date(item.created_at)}</small>
+                                <small>
+                                  {date(item.created_at)}
+                                  {item.supporters > 0 && (
+                                    <span
+                                      className="supporters-chip"
+                                      title="Коллеги с той же ситуацией присоединились вместо дублей"
+                                    >
+                                      +{item.supporters} с той же ситуацией
+                                    </span>
+                                  )}
+                                </small>
                               </td>
                               <td data-label="Автор / подразделение">
                                 {item.author}
