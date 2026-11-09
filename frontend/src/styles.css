@@ -2223,3 +2223,15 @@ button:disabled { cursor: not-allowed; }
 .reply-assistant-result blockquote { margin: 0; padding: 12px 14px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; line-height: 1.6; }
 .reply-assistant-result .form-actions { margin-top: 12px; justify-content: flex-end; }
 @media (max-width: 560px) { .reply-assistant-start { flex-direction: column; } .reply-assistant-start > button { width: 100%; } }
+
+/* Own file picker: Russian label, same look as the other controls. */
+.file-picker { position: relative; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 8px; border: 1px solid var(--input); border-radius: 8px; background: var(--card); }
+.file-picker-input { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; clip-path: inset(50%); }
+.file-picker-button { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 16px; border-radius: 6px; background: var(--secondary); color: var(--foreground); font-size: 14px; font-weight: 500; cursor: pointer; transition: background 160ms ease; }
+.file-picker-button svg { width: 16px; height: 16px; }
+.file-picker-button:hover { background: var(--secondary-hover); }
+.file-picker-input:focus-visible + .file-picker-button { outline: 2px solid var(--ring); outline-offset: 2px; }
+.file-picker-input:disabled + .file-picker-button { opacity: .5; cursor: not-allowed; }
+.file-picker-input[aria-invalid="true"] ~ .file-picker-status { color: var(--destructive); }
+[data-invalid="true"] .file-picker { border-color: var(--destructive); }
+.file-picker-status { font-size: 14px; color: var(--muted-foreground); }

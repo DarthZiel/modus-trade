@@ -9,7 +9,7 @@ import {
 import { Input } from "./components/ui/input";
 import { Textarea } from "./components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "./components/ui/toggle-group";
-import { Plus, ArrowRight, MessageSquare, CheckCheck } from "lucide-react";
+import { Plus, ArrowRight, MessageSquare, CheckCheck, Paperclip } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
 import {
   Empty,
@@ -1119,15 +1119,29 @@ function AppealForm({
                   <FieldLabel htmlFor="appeal-files">
                     Вложения <span className="optional">необязательно</span>
                   </FieldLabel>
-                  <Input
-                    id="appeal-files"
-                    type="file"
-                    multiple
-                    accept=".jpg,.jpeg,.png,.webp,.pdf"
-                    onChange={selectFiles}
-                    aria-invalid={!!fileError}
-                    aria-describedby="files-help"
-                  />
+                  {/* Native file inputs show the browser's own (often English) label: use our own control. */}
+                  <div className="file-picker">
+                    <input
+                      id="appeal-files"
+                      className="file-picker-input"
+                      type="file"
+                      multiple
+                      accept=".jpg,.jpeg,.png,.webp,.pdf"
+                      onChange={selectFiles}
+                      aria-invalid={!!fileError}
+                      aria-describedby="files-help"
+                      disabled={files.length >= 5}
+                    />
+                    <label htmlFor="appeal-files" className="file-picker-button">
+                      <Paperclip aria-hidden="true" />
+                      {files.length ? "Добавить ещё" : "Выбрать файлы"}
+                    </label>
+                    <span className="file-picker-status">
+                      {files.length
+                        ? `Выбрано: ${files.length} из 5`
+                        : "Файлы не выбраны"}
+                    </span>
+                  </div>
                   <FieldDescription id="files-help">
                     До 5 файлов по 10 МБ. Фото в JPEG, PNG, WebP или документ
                     PDF.
