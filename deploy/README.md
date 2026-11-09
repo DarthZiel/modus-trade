@@ -204,6 +204,19 @@ volumes, чтобы не затереть production. Распакуйте ну�
 `./deploy/compose.sh up -d --no-deps landing`. При следующем полном релизе
 очистите LANDING_RELEASE_TAG, чтобы лендинг использовал общий RELEASE_TAG.
 
+**Откат релиза v2 (миграция `dg001`).** Backend v1 при старте выполняет
+`alembic upgrade head` и не знает ревизию `dg001`, поэтому сначала снимите её
+образом v2, затем верните теги:
+
+```bash
+./deploy/compose.sh exec backend alembic downgrade cf001   # удаляет присоединения и индекс pg_trgm
+sed -i 's/^RELEASE_TAG=v2$/RELEASE_TAG=v1/; s/^FRONTEND_RELEASE_TAG=.*/FRONTEND_RELEASE_TAG=v1.1/' .env.production
+./deploy/compose.sh up -d --wait
+```
+
+Данные «присоединившихся» при этом теряются; остальные данные не меняются.
+Резервная копия перед v2: `backups/20261109T180924Z-uiLuex.tar`.
+
 Фронтенд обновляется отдельно так же: соберите образ
 `irontech-frontend:<тег>` (`docker build -t irontech-frontend:<тег> frontend/`),
 задайте FRONTEND_RELEASE_TAG и выполните
