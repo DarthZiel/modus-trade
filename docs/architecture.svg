@@ -1,0 +1,203 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" font-family="Golos, 'Golos Text', Inter, -apple-system, 'Helvetica Neue', Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#60666d"/>
+    </marker>
+    <marker id="arrow-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#c04416"/>
+    </marker>
+    <style>
+      .title { font-size: 34px; font-weight: 700; fill: #202429; letter-spacing: -0.5px; }
+      .subtitle { font-size: 17px; fill: #60666d; }
+      .col { font-size: 13px; font-weight: 600; fill: #60666d; letter-spacing: 1.2px; }
+      .box { fill: #ffffff; stroke: #d6d9dd; stroke-width: 1.5; }
+      .accent { fill: #fff1ea; stroke: #f2c9b4; stroke-width: 1.5; }
+      .dark { fill: #1f2a26; }
+      .ext { fill: #ffffff; stroke: #98a0a8; stroke-width: 1.5; stroke-dasharray: 6 5; }
+      .h { font-size: 18px; font-weight: 650; fill: #202429; }
+      .hw { font-size: 18px; font-weight: 650; fill: #f5f6f7; }
+      .t { font-size: 14px; fill: #60666d; }
+      .tw { font-size: 14px; fill: #c1c5ca; }
+      .chip { fill: #f3f4f5; stroke: none; }
+      .chipnew { fill: #fff1ea; stroke: #f2c9b4; stroke-width: 1; }
+      .ct { font-size: 14px; font-weight: 500; fill: #30363d; }
+      .ctnew { font-size: 14px; font-weight: 600; fill: #963510; }
+      .line { stroke: #60666d; stroke-width: 1.6; fill: none; }
+      .line-accent { stroke: #c04416; stroke-width: 1.8; fill: none; }
+      .line-ext { stroke: #c04416; stroke-width: 1.8; fill: none; stroke-dasharray: 7 6; }
+      .lbl { font-size: 13px; fill: #60666d; }
+      .lbla { font-size: 13px; font-weight: 600; fill: #963510; }
+      .vps { fill: #eceef0; stroke: #c3c8ce; stroke-width: 1.5; }
+      .vpsh { font-size: 15px; font-weight: 650; fill: #30363d; }
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="#f3f4f5"/>
+
+  <!-- Title -->
+  <text x="48" y="64" class="title">Модус Трейд · Фидбек — архитектура</text>
+  <text x="48" y="96" class="subtitle">Один backend для сайта, Mini App и Telegram-бота · обращение → ответственный → решение или эксперимент → результат → «Помогло» от автора</text>
+
+  <!-- Column labels -->
+  <text x="48" y="150" class="col">ЛЮДИ</text>
+  <text x="290" y="150" class="col">КАНАЛЫ</text>
+  <text x="596" y="150" class="col">VPS · UBUNTU 24.04 · DOCKER COMPOSE</text>
+  <text x="1318" y="150" class="col">ВНЕШНИЕ СЕРВИСЫ</text>
+
+  <!-- People -->
+  <g>
+    <rect x="48" y="176" width="196" height="76" rx="12" class="box"/>
+    <text x="68" y="208" class="h">Сотрудник</text>
+    <text x="68" y="232" class="t">пишет и оценивает</text>
+    <rect x="48" y="272" width="196" height="76" rx="12" class="box"/>
+    <text x="68" y="304" class="h">Ответственный</text>
+    <text x="68" y="328" class="t">отвечает и решает</text>
+    <rect x="48" y="368" width="196" height="76" rx="12" class="box"/>
+    <text x="68" y="400" class="h">Координатор</text>
+    <text x="68" y="424" class="t">распределяет и следит</text>
+  </g>
+
+  <!-- Channels -->
+  <g>
+    <rect x="290" y="176" width="236" height="76" rx="12" class="box"/>
+    <text x="310" y="208" class="h">Сайт</text>
+    <text x="310" y="232" class="t">браузер, по приглашению</text>
+    <rect x="290" y="272" width="236" height="76" rx="12" class="box"/>
+    <text x="310" y="304" class="h">Telegram Mini App</text>
+    <text x="310" y="328" class="t">тот же интерфейс в Telegram</text>
+    <rect x="290" y="368" width="236" height="76" rx="12" class="accent"/>
+    <text x="310" y="400" class="h">Чат с ботом</text>
+    <text x="310" y="424" class="t">текст · фото · <tspan font-weight="700" fill="#963510">голос</tspan></text>
+  </g>
+  <path d="M244 214 H267 M244 310 H267 M244 406 H267 M267 214 V406" class="line"/>
+  <path d="M267 214 H286 M267 310 H286 M267 406 H286" class="line"/>
+  <text x="48" y="472" class="t">Любая роль — в любом канале:</text>
+  <text x="48" y="492" class="t">обращения и ответы общие</text>
+
+  <!-- Telegram Bot API (external) -->
+  <rect x="290" y="560" width="236" height="96" rx="12" class="ext"/>
+  <text x="310" y="594" class="h">Telegram Bot API</text>
+  <text x="310" y="618" class="t">сообщения и голосовые</text>
+  <text x="310" y="638" class="t">доставка уведомлений</text>
+  <path d="M408 444 L408 556" class="line" marker-end="url(#arrow)"/>
+
+  <!-- VPS -->
+  <rect x="580" y="166" width="690" height="760" rx="18" class="vps"/>
+
+  <!-- Caddy -->
+  <rect x="604" y="190" width="214" height="150" rx="12" class="dark"/>
+  <text x="624" y="224" class="hw">Caddy</text>
+  <text x="624" y="250" class="tw">HTTPS, автосертификаты</text>
+  <text x="624" y="276" class="tw">feedback.iron-tech.kz</text>
+  <text x="624" y="298" class="tw">/api/* → backend</text>
+  <text x="624" y="320" class="tw">iron-tech.kz → лендинг</text>
+  <path d="M526 214 L600 236" class="line" marker-end="url(#arrow)"/>
+  <path d="M526 310 L600 290" class="line" marker-end="url(#arrow)"/>
+  <text x="532" y="268" class="lbl">HTTPS</text>
+
+  <!-- Frontend / landing -->
+  <rect x="852" y="190" width="394" height="82" rx="12" class="box"/>
+  <text x="872" y="222" class="h">frontend · nginx</text>
+  <text x="872" y="248" class="t">React 19 + TypeScript · сайт и Mini App</text>
+  <rect x="852" y="286" width="394" height="54" rx="12" class="box"/>
+  <text x="872" y="319" class="h" font-size="16">landing</text>
+  <text x="960" y="319" class="t">лендинг команды Iron Tech</text>
+  <path d="M818 232 L848 232" class="line" marker-end="url(#arrow)"/>
+  <path d="M818 312 L848 312" class="line" marker-end="url(#arrow)"/>
+
+  <!-- Backend -->
+  <rect x="604" y="372" width="642" height="268" rx="14" class="box" stroke="#c04416" stroke-width="2"/>
+  <text x="626" y="406" class="h" font-size="20">backend · FastAPI</text>
+  <text x="808" y="406" class="t">Python 3.12 · SQLModel · права на каждое обращение и файл</text>
+  <path d="M711 340 L711 368" class="line" marker-end="url(#arrow)"/>
+  <text x="720" y="360" class="lbl">/api</text>
+  <!-- chips: 2 columns x 4 rows -->
+  <g>
+    <rect x="626" y="424" width="296" height="40" rx="8" class="chip"/>
+    <text x="644" y="449" class="ct">Приглашения, роли, сессии</text>
+    <rect x="930" y="424" width="296" height="40" rx="8" class="chip"/>
+    <text x="948" y="449" class="ct">Обращения, вложения, история</text>
+    <rect x="626" y="472" width="296" height="40" rx="8" class="chip"/>
+    <text x="644" y="497" class="ct">Очередь, сроки, просрочки</text>
+    <rect x="930" y="472" width="296" height="40" rx="8" class="chip"/>
+    <text x="948" y="497" class="ct">Переписка, решения, эксперименты</text>
+    <rect x="626" y="520" width="296" height="40" rx="8" class="chipnew"/>
+    <text x="644" y="545" class="ctnew">Похожие обращения · pg_trgm</text>
+    <rect x="930" y="520" width="296" height="40" rx="8" class="chipnew"/>
+    <text x="948" y="545" class="ctnew">«Эффект»: метрики цикла</text>
+    <rect x="626" y="568" width="296" height="40" rx="8" class="chipnew"/>
+    <text x="644" y="593" class="ctnew">ИИ: формулировка и черновики</text>
+    <rect x="930" y="568" width="296" height="40" rx="8" class="chipnew"/>
+    <text x="948" y="593" class="ctnew">Голос → текст</text>
+  </g>
+
+  <!-- Workers & DB row -->
+  <rect x="604" y="672" width="198" height="96" rx="12" class="accent"/>
+  <text x="624" y="704" class="h">bot · aiogram</text>
+  <text x="624" y="728" class="t">диалог, похожие,</text>
+  <text x="624" y="748" class="t">голос, уведомления</text>
+
+  <rect x="826" y="672" width="198" height="96" rx="12" class="box"/>
+  <text x="846" y="704" class="h">reminders</text>
+  <text x="846" y="728" class="t">просрочки и</text>
+  <text x="846" y="748" class="t">напоминания</text>
+
+  <rect x="1048" y="672" width="198" height="96" rx="12" class="dark"/>
+  <text x="1068" y="704" class="hw">PostgreSQL 17</text>
+  <text x="1068" y="728" class="tw">+ pg_trgm</text>
+  <text x="1068" y="748" class="tw">общая для всех каналов</text>
+
+  <!-- Storage row -->
+  <rect x="604" y="796" width="310" height="66" rx="12" class="box"/>
+  <text x="624" y="826" class="h" font-size="16">uploads</text>
+  <text x="624" y="848" class="t">вложения backend: фото, PDF ≤ 10 МБ</text>
+  <rect x="936" y="796" width="310" height="66" rx="12" class="box"/>
+  <text x="956" y="826" class="h" font-size="16">Резервные копии</text>
+  <text x="956" y="848" class="t">база и вложения, контрольные суммы</text>
+  <text x="604" y="900" class="t">Наружу открыты только 22 (SSH по ключу), 80 и 443. База и API — во внутренней сети Docker.</text>
+
+  <!-- Internal arrows -->
+  <path d="M1147 640 L1147 668" class="line" marker-end="url(#arrow)"/>
+  <path d="M703 668 L703 644" class="line" marker-end="url(#arrow)"/>
+  <text x="712" y="660" class="lbl">внутренний API · секрет бота</text>
+  <path d="M925 668 L925 644" class="line" marker-end="url(#arrow)"/>
+  <path d="M1147 768 L1147 792" class="line" marker-end="url(#arrow)"/>
+
+  <!-- Telegram Bot API <-> bot -->
+  <path d="M526 640 C 560 640, 560 720, 600 720" class="line" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+  <text x="474" y="690" class="lbl">long polling</text>
+
+  <!-- OpenRouter (external) -->
+  <rect x="1318" y="372" width="244" height="190" rx="12" class="ext"/>
+  <text x="1338" y="406" class="h">OpenRouter</text>
+  <text x="1338" y="432" class="t">LLM: формулировка,</text>
+  <text x="1338" y="452" class="t">план эксперимента,</text>
+  <text x="1338" y="472" class="t">сводка и черновик ответа</text>
+  <text x="1338" y="498" class="t">Аудиомодель: голос → текст</text>
+  <text x="1338" y="536" class="lbla">только после согласия</text>
+  <text x="1338" y="554" class="lbla">без имён и профилей</text>
+  <path d="M1246 470 L1314 470" class="line-ext" marker-end="url(#arrow-accent)"/>
+
+  <!-- Principles -->
+  <rect x="1318" y="600" width="244" height="262" rx="12" class="box"/>
+  <text x="1338" y="634" class="h">Принципы</text>
+  <text x="1338" y="664" class="t">• ИИ предлагает — решает</text>
+  <text x="1352" y="684" class="t">человек</text>
+  <text x="1338" y="710" class="t">• Закрывает автор: «Помогло»</text>
+  <text x="1338" y="736" class="t">• Дубли → «присоединиться»</text>
+  <text x="1338" y="762" class="t">• Повтор запроса не создаёт</text>
+  <text x="1352" y="782" class="t">дублей</text>
+  <text x="1338" y="808" class="t">• Без ИИ всё продолжает</text>
+  <text x="1352" y="828" class="t">работать</text>
+
+  <!-- Legend -->
+  <g transform="translate(48 940)">
+    <line x1="0" y1="0" x2="36" y2="0" class="line"/>
+    <text x="46" y="5" class="lbl">HTTPS / внутренняя сеть</text>
+    <line x1="230" y1="0" x2="266" y2="0" class="line-ext"/>
+    <text x="276" y="5" class="lbl">внешний сервис по согласию</text>
+    <rect x="490" y="-10" width="22" height="20" rx="5" class="chipnew"/>
+    <text x="522" y="5" class="lbl">новое к защите</text>
+    <rect x="660" y="-10" width="22" height="20" rx="5" class="ext"/>
+    <text x="692" y="5" class="lbl">вне сервера</text>
+  </g>
+</svg>
