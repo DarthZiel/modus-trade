@@ -203,3 +203,10 @@ volumes, чтобы не затереть production. Распакуйте ну�
 При отдельном обновлении лендинга задайте LANDING_RELEASE_TAG и выполните
 `./deploy/compose.sh up -d --no-deps landing`. При следующем полном релизе
 очистите LANDING_RELEASE_TAG, чтобы лендинг использовал общий RELEASE_TAG.
+
+Фронтенд обновляется отдельно так же: соберите образ
+`irontech-frontend:<тег>` (`docker build -t irontech-frontend:<тег> frontend/`),
+задайте FRONTEND_RELEASE_TAG и выполните
+`./deploy/compose.sh up -d --no-deps --wait frontend`. Откат — вернуть
+прежнее значение FRONTEND_RELEASE_TAG (или удалить его) и повторить команду.
+При следующем полном релизе очистите FRONTEND_RELEASE_TAG.
