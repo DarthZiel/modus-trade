@@ -238,6 +238,10 @@ button:disabled {
   opacity: 0.6;
   cursor: wait;
 }
+/* Tab triggers are buttons too: drop the global margin so they sit centered in the tab list. */
+[data-slot="tabs-trigger"] {
+  margin: 0;
+}
 :focus-visible {
   outline: 3px solid #27704f;
   outline-offset: 4px;
