@@ -18,3 +18,5 @@ uploads/
 
 # Temporary chart export workspaces
 .chart-data-*/
+
+.director-demo-login.json

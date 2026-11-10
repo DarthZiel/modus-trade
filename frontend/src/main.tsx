@@ -11,6 +11,10 @@ import { TelegramSettings, loginFromTelegram } from "./telegram";
 import { Notifications } from "./notifications";
 import { WorkQueue } from "./work-queue";
 import { Appeals } from "./appeals";
+import { Statistics } from "./statistics";
+import { Topics } from "./similarities";
+import { DirectorCabinet } from "./director";
+import { Impact } from "./impact";
 import { navigate, usePath } from "./navigation";
 import { StrictMode, useEffect, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
@@ -70,7 +74,7 @@ function RoleFields({
     <fieldset>
       <legend>Роли</legend>
       <p className="hint">Каждый участник может подавать свои обращения.</p>
-      {(["responsible", "coordinator"] as Role[]).map((role) => (
+      {(["responsible", "coordinator", "director"] as Role[]).map((role) => (
         <label className="check" key={role}>
           <input
             type="checkbox"
@@ -914,6 +918,10 @@ function App() {
       })
       .finally(() => setLoading(false));
   }, [activation]);
+  useEffect(() => {
+    if (user?.roles.includes("director") && (path === "/" || path === "/mini"))
+      navigate("/director");
+  }, [user, path]);
   async function logout() {
     setLogoutBusy(true);
     try {
@@ -968,14 +976,19 @@ function App() {
         ) : user ? (
           <>
             {(user.roles.includes("coordinator") ||
-              user.roles.includes("responsible")) && (
+              user.roles.includes("responsible") ||
+              user.roles.includes("director")) && (
               <nav className="tabs workspace-nav" aria-label="Разделы кабинета">
                 <Button
                   variant="outline"
                   aria-current={
                     !path.startsWith("/team") &&
                     !path.startsWith("/queue") &&
-                    !path.startsWith("/settings")
+                    !path.startsWith("/settings") &&
+                    !path.startsWith("/statistics") &&
+                    !path.startsWith("/topics") &&
+                    !path.startsWith("/director") &&
+                    !path.startsWith("/impact")
                       ? "page"
                       : undefined
                   }
@@ -983,28 +996,89 @@ function App() {
                 >
                   Мои обращения
                 </Button>
-                <Button
-                  variant="outline"
-                  aria-current={path.startsWith("/queue") ? "page" : undefined}
-                  onClick={() => navigate("/queue")}
-                >
-                  {user.roles.includes("coordinator")
-                    ? "Очередь обращений"
-                    : "Назначенные мне"}
-                </Button>
-                {user.roles.includes("coordinator") && (
+                {(user.roles.includes("coordinator") ||
+                  user.roles.includes("responsible")) && (
                   <Button
                     variant="outline"
-                    aria-current={path.startsWith("/team") ? "page" : undefined}
-                    onClick={() => navigate("/team")}
+                    aria-current={
+                      path.startsWith("/queue") ? "page" : undefined
+                    }
+                    onClick={() => navigate("/queue")}
                   >
-                    Управление командой
+                    {user.roles.includes("coordinator")
+                      ? "Очередь обращений"
+                      : "Назначенные мне"}
                   </Button>
+                )}
+                {(user.roles.includes("coordinator") ||
+                  user.roles.includes("responsible")) && (
+                  <Button
+                    variant="outline"
+                    aria-current={
+                      path.startsWith("/impact") ? "page" : undefined
+                    }
+                    onClick={() => navigate("/impact")}
+                  >
+                    Эффект
+                  </Button>
+                )}
+                {(user.roles.includes("director") ||
+                  user.roles.includes("coordinator")) && (
+                  <Button
+                    variant="outline"
+                    aria-current={
+                      path.startsWith("/director") ? "page" : undefined
+                    }
+                    onClick={() => navigate("/director")}
+                  >
+                    Кабинет директора
+                  </Button>
+                )}
+                {user.roles.includes("coordinator") && (
+                  <>
+                    <Button
+                      variant="outline"
+                      aria-current={
+                        path.startsWith("/topics") ? "page" : undefined
+                      }
+                      onClick={() => navigate("/topics")}
+                    >
+                      Повторяющиеся проблемы
+                    </Button>
+                    <Button
+                      variant="outline"
+                      aria-current={
+                        path.startsWith("/statistics") ? "page" : undefined
+                      }
+                      onClick={() => navigate("/statistics")}
+                    >
+                      Статистика
+                    </Button>
+                    <Button
+                      variant="outline"
+                      aria-current={
+                        path.startsWith("/team") ? "page" : undefined
+                      }
+                      onClick={() => navigate("/team")}
+                    >
+                      Управление командой
+                    </Button>
+                  </>
                 )}
               </nav>
             )}
             {path === "/settings" ? (
               <TelegramSettings />
+            ) : path.startsWith("/director") &&
+              (user.roles.includes("director") ||
+                user.roles.includes("coordinator")) ? (
+              <DirectorCabinet user={user} />
+            ) : path.startsWith("/statistics") &&
+              user.roles.includes("coordinator") ? (
+              <Statistics />
+            ) : path.startsWith("/topics") &&
+              user.roles.includes("coordinator") ? (
+              <Topics />
             ) : path.startsWith("/team") &&
               user.roles.includes("coordinator") ? (
               <>
@@ -1026,6 +1100,10 @@ function App() {
               (user.roles.includes("coordinator") ||
                 user.roles.includes("responsible")) ? (
               <WorkQueue user={user} />
+            ) : path === "/impact" &&
+              (user.roles.includes("coordinator") ||
+                user.roles.includes("responsible")) ? (
+              <Impact user={user} />
             ) : (
               <Appeals user={user} />
             )}

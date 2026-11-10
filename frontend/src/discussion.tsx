@@ -27,6 +27,7 @@ import type { FormEvent } from "react";
 import { api, ApiError } from "./api";
 import type { User } from "./api";
 import type { Detail } from "./appeals";
+import { ReplyAssistant } from "./reply-assistant";
 
 type Message = {
   id: number;
@@ -147,7 +148,7 @@ export function Conversation({
         </Button>
       </div>
       <p className="hint">
-        Сообщения видят автор и сотрудники, рассматривающие обращение.
+        Сообщения видят автор, участники рассмотрения и директор компании.
       </p>
       {loadError && (
         <p className="error" role="alert">
@@ -226,46 +227,72 @@ export function Conversation({
               )}
         </div>
       )}
-      <form onSubmit={send} className="message-composer" aria-busy={busy}>
-        <Field data-invalid={!!error}>
-          <FieldLabel htmlFor="message-body">
-            {appeal.status === "needs_info" && appeal.author_id === user.id
-              ? "Ответить на уточнение"
-              : "Новое сообщение"}
-          </FieldLabel>
-          {appeal.status === "needs_info" && appeal.author_id === user.id && (
-            <p className="hint">
-              После вашего ответа рассмотрение обращения продолжится.
-            </p>
-          )}
-          <Textarea
-            id="message-body"
-            aria-invalid={!!error}
-            aria-describedby="message-help"
-            value={body}
-            maxLength={10000}
-            rows={3}
-            required
-            disabled={busy}
-            onChange={(event) => {
-              setBody(event.target.value);
+      {(user.roles.includes("coordinator") ||
+        (user.roles.includes("responsible") &&
+          appeal.responsible_id === user.id)) &&
+        appeal.author_id !== user.id &&
+        !["closed", "rejected"].includes(appeal.status) && (
+          <ReplyAssistant
+            appealId={appeal.id}
+            onInsert={(text) => {
+              setBody(text);
               setError("");
+              requestAnimationFrame(() =>
+                document.getElementById("message-body")?.focus(),
+              );
             }}
           />
-          <FieldDescription id="message-help">
-            {body.length.toLocaleString("ru-RU")} / 10 000 символов
-          </FieldDescription>
-        </Field>
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
         )}
-        <Button disabled={busy || !body.trim()}>
-          <Send data-icon="inline-start" aria-hidden="true" />
-          {busy ? "Отправляем…" : "Отправить сообщение"}
-        </Button>
-      </form>
+      {appeal.author_id === user.id ||
+      user.roles.includes("coordinator") ||
+      (user.roles.includes("responsible") &&
+        appeal.responsible_id === user.id) ? (
+        <form onSubmit={send} className="message-composer" aria-busy={busy}>
+          <Field data-invalid={!!error}>
+            <FieldLabel htmlFor="message-body">
+              {appeal.status === "needs_info" && appeal.author_id === user.id
+                ? "Ответить на уточнение"
+                : "Новое сообщение"}
+            </FieldLabel>
+            {appeal.status === "needs_info" && appeal.author_id === user.id && (
+              <p className="hint">
+                После вашего ответа рассмотрение обращения продолжится.
+              </p>
+            )}
+            <Textarea
+              id="message-body"
+              aria-invalid={!!error}
+              aria-describedby="message-help"
+              value={body}
+              maxLength={10000}
+              rows={3}
+              required
+              disabled={busy}
+              onChange={(event) => {
+                setBody(event.target.value);
+                setError("");
+              }}
+            />
+            <FieldDescription id="message-help">
+              {body.length.toLocaleString("ru-RU")} / 10 000 символов
+            </FieldDescription>
+          </Field>
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
+          <Button disabled={busy || !body.trim()}>
+            <Send data-icon="inline-start" aria-hidden="true" />
+            {busy ? "Отправляем…" : "Отправить сообщение"}
+          </Button>
+        </form>
+      ) : (
+        <p className="hint">
+          Переписка доступна вам для чтения. Ответы отправляют автор и участники
+          рассмотрения.
+        </p>
+      )}
     </section>
   );
 }

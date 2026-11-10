@@ -5,7 +5,7 @@ export function setTelegramToken(value: string) {
 export function telegramHeaders(): Record<string, string> {
   return telegramToken ? { Authorization: `Bearer ${telegramToken}` } : {};
 }
-export type Role = "employee" | "responsible" | "coordinator";
+export type Role = "employee" | "responsible" | "coordinator" | "director";
 export type User = {
   id: string;
   name: string;
@@ -32,6 +32,7 @@ export const roleNames: Record<Role, string> = {
   employee: "Сотрудник",
   responsible: "Ответственный",
   coordinator: "Координатор",
+  director: "Директор",
 };
 
 export class ApiError extends Error {

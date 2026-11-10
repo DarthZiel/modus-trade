@@ -4,11 +4,13 @@ from uuid import UUID, uuid4
 from sqlalchemy import (
     JSON,
     BigInteger,
+    CheckConstraint,
     Column,
     DateTime,
     Index,
     Integer,
     UniqueConstraint,
+    func,
     text,
 )
 from sqlmodel import Field, SQLModel
@@ -106,10 +108,81 @@ class Appeal(SQLModel, table=True):
         default=None, sa_column=Column(DateTime(timezone=True))
     )
     responsible_id: UUID | None = Field(default=None, foreign_key="users.id")
+    first_response_at: datetime | None = Field(
+        default=None, sa_column=Column(DateTime(timezone=True))
+    )
     next_response_at: datetime | None = Field(
         default=None, sa_column=Column(DateTime(timezone=True))
     )
     created_at: datetime = Field(default_factory=utcnow, sa_column=timestamp())
+
+
+Index(
+    "ix_appeals_title_trgm",
+    func.lower(Appeal.title).label("title_normalized"),
+    postgresql_using="gin",
+    postgresql_ops={"title_normalized": "gin_trgm_ops"},
+)
+
+
+class AppealPriority(SQLModel, table=True):
+    __tablename__ = "appeal_priorities"
+    appeal_id: int = Field(foreign_key="appeals.id", primary_key=True)
+    version: int = 0
+    ai_lane: str | None = Field(default=None, max_length=16)
+    ai_level: str | None = Field(default=None, max_length=16)
+    ai_reason: str = Field(default="", max_length=1200)
+    ai_next_step: str = Field(default="", max_length=600)
+    ai_source: str = Field(default="", max_length=16)
+    ai_context_hash: str = Field(default="", max_length=64)
+    ai_updated_at: datetime | None = Field(
+        default=None, sa_column=Column(DateTime(timezone=True))
+    )
+    manual_lane: str | None = Field(default=None, max_length=16)
+    manual_level: str | None = Field(default=None, max_length=16)
+    manual_reason: str = Field(default="", max_length=1200)
+    manual_next_step: str = Field(default="", max_length=600)
+    manual_by: UUID | None = Field(default=None, foreign_key="users.id")
+    manual_at: datetime | None = Field(
+        default=None, sa_column=Column(DateTime(timezone=True))
+    )
+
+
+class PriorityEvent(SQLModel, table=True):
+    __tablename__ = "priority_events"
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    appeal_id: int = Field(foreign_key="appeals.id", index=True)
+    actor_id: UUID = Field(foreign_key="users.id")
+    action: str = Field(max_length=16)
+    lane: str = Field(max_length=16)
+    level: str = Field(max_length=16)
+    reason: str = Field(max_length=1200)
+    next_step: str = Field(max_length=600)
+    source: str = Field(max_length=16)
+    version: int
+    created_at: datetime = Field(default_factory=utcnow, sa_column=timestamp())
+
+
+class AppealRelation(SQLModel, table=True):
+    __tablename__ = "appeal_relations"
+    __table_args__ = (
+        UniqueConstraint("left_id", "right_id"),
+        CheckConstraint("left_id < right_id", name="ordered_pair"),
+    )
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    left_id: int = Field(foreign_key="appeals.id", index=True)
+    right_id: int = Field(foreign_key="appeals.id", index=True)
+    kind: str = Field(max_length=32)
+    topic: str = Field(max_length=160)
+    reason: str = Field(max_length=1000)
+    source: str = Field(max_length=16)
+    status: str = Field(default="pending", max_length=16)
+    version: int = 0
+    reviewed_by: UUID | None = Field(default=None, foreign_key="users.id")
+    created_at: datetime = Field(default_factory=utcnow, sa_column=timestamp())
+    reviewed_at: datetime | None = Field(
+        default=None, sa_column=Column(DateTime(timezone=True))
+    )
 
 
 class AppealAttachment(SQLModel, table=True):
@@ -128,6 +201,18 @@ class AppealEvent(SQLModel, table=True):
     appeal_id: int = Field(foreign_key="appeals.id", index=True)
     actor_id: UUID = Field(foreign_key="users.id")
     text: str
+    created_at: datetime = Field(default_factory=utcnow, sa_column=timestamp())
+
+
+class AppealSupporter(SQLModel, table=True):
+    """An employee who joined an existing appeal instead of filing a duplicate."""
+
+    __tablename__ = "appeal_supporters"
+    __table_args__ = (UniqueConstraint("appeal_id", "user_id"),)
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    appeal_id: int = Field(foreign_key="appeals.id", index=True)
+    user_id: UUID = Field(foreign_key="users.id", index=True)
+    comment: str = Field(default="", max_length=1000)
     created_at: datetime = Field(default_factory=utcnow, sa_column=timestamp())
 
 

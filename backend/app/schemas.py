@@ -9,6 +9,7 @@ class Role(StrEnum):
     employee = "employee"
     responsible = "responsible"
     coordinator = "coordinator"
+    director = "director"
 
 
 class NameInput(BaseModel):
@@ -47,12 +48,12 @@ class AcceptInput(TokenInput):
 class InviteInput(NameInput, EmailInput):
     company_id: UUID
     department_id: UUID
-    roles: list[Role] = Field(default_factory=lambda: [Role.employee], max_length=3)
+    roles: list[Role] = Field(default_factory=lambda: [Role.employee], max_length=4)
     expires_in_days: int = Field(default=7, ge=1, le=30)
 
 
 class UserUpdate(BaseModel):
-    roles: list[Role] = Field(max_length=3)
+    roles: list[Role] = Field(max_length=4)
     is_active: bool
 
 

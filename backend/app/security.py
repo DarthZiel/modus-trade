@@ -77,6 +77,15 @@ def coordinator(user: CurrentUser) -> User:
 Coordinator = Annotated[User, Depends(coordinator)]
 
 
+def insight_reader(user: CurrentUser) -> User:
+    if not {"coordinator", "director"}.intersection(user.roles):
+        raise HTTPException(403, "Доступно директору и координатору")
+    return user
+
+
+InsightReader = Annotated[User, Depends(insight_reader)]
+
+
 def create_session(
     db: Session,
     user: User,

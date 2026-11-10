@@ -17,6 +17,10 @@ from app.models import (
     AppealEvent,
     AppealFeedback,
     AppealMessage,
+    AppealRelation,
+    AppealSupporter,
+    AppealPriority,
+    PriorityEvent,
     Company,
     Department,
     Experiment,
@@ -51,8 +55,23 @@ def clear(db, company):
         raise SystemExit(
             "В демо добавлены вложения. Удаление остановлено, чтобы сохранить файлы."
         )
-    for model in [Notification, Experiment, AppealFeedback, AppealMessage, AppealEvent]:
+    for model in [
+        AppealSupporter,
+        PriorityEvent,
+        AppealPriority,
+        Notification,
+        Experiment,
+        AppealFeedback,
+        AppealMessage,
+        AppealEvent,
+    ]:
         db.execute(delete(model).where(model.appeal_id.in_(appeal_ids)))
+    db.execute(
+        delete(AppealRelation).where(
+            AppealRelation.left_id.in_(appeal_ids)
+            | AppealRelation.right_id.in_(appeal_ids)
+        )
+    )
     db.execute(delete(Appeal).where(Appeal.company_id == company.id))
     for model in [LoginSession, TelegramLinkToken, TelegramLink]:
         db.execute(delete(model).where(model.user_id.in_([u.id for u in users])))

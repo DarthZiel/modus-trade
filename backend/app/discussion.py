@@ -58,6 +58,14 @@ def send_message(
         db.exec(select(Appeal).where(Appeal.id == appeal_id).with_for_update()).first(),
         user,
     )
+    if not (
+        appeal.author_id == user.id
+        or "coordinator" in user.roles
+        or ("responsible" in user.roles and appeal.responsible_id == user.id)
+    ):
+        raise HTTPException(
+            403, "Директор просматривает чужие обращения без изменения переписки"
+        )
     previous = db.exec(
         select(AppealMessage).where(
             AppealMessage.appeal_id == appeal_id,
@@ -79,6 +87,8 @@ def send_message(
         appeal_id=appeal_id, sender_id=user.id, client_id=data.client_id, body=data.body
     )
     db.add(message)
+    if user.id != appeal.author_id and appeal.first_response_at is None:
+        appeal.first_response_at = utcnow()
     if appeal.status == "needs_info" and user.id == appeal.author_id:
         appeal.status = appeal.resume_status or "reviewing"
         appeal.resume_status = None
@@ -173,6 +183,12 @@ def review(
         appeal.result = data.explanation
         appeal.decided_at = utcnow()
         event = "Обращение отклонено. Причина:\n" + data.explanation
+    if (
+        data.action in {"request_info", "resolve", "reject"}
+        and user.id != appeal.author_id
+        and appeal.first_response_at is None
+    ):
+        appeal.first_response_at = utcnow()
     appeal.assignment_version += 1
     db.add(appeal)
     db.add(AppealEvent(appeal_id=appeal_id, actor_id=user.id, text=event))
