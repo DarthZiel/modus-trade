@@ -418,8 +418,7 @@ OpenRouter поддерживается отдельным адаптером: `
 Самостоятельная айдентика «Модус Трейд · Фидбек» описана в `DESIGN.md`,
 контекст сервиса — в `PRODUCT.md`. Компоненты shadcn/ui хранятся исходным кодом
 в `frontend/src/components/ui`; Tailwind v4 подключён через Vite. Golos Text
-с кириллицей загружается локально. Навыки shadcn и Impeccable установлены
-в `.agents/skills`, расширенные токены — в `.impeccable/design.json`.
+с кириллицей загружается локально.
 
 Если `npm run dev` сообщает о лимите файловых наблюдателей `ENOSPC`, локально
 запускайте `CHOKIDAR_USEPOLLING=true npm run dev`. Production-сборке polling не нужен.

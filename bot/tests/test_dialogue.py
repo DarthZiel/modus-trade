@@ -46,6 +46,8 @@ class FakeMessage:
         self.text = text
         self.photo = None
         self.document = None
+        self.voice = None
+        self.audio = None
         self.answers = []
         self.bot = SimpleNamespace(download=self.download)
 
@@ -274,5 +276,138 @@ def test_openrouter_requires_consent_for_current_provider(backend, monkeypatch):
         assert "/ai/appeal" not in calls
         await main.process_callback(query(message, "ai-consent:openrouter"))
         assert calls.count("/ai/appeal") == 1
+
+    asyncio.run(scenario())
+
+
+def test_similar_appeal_offers_join_instead_of_duplicate(backend):
+    similar = [
+        {
+            "id": 6,
+            "number": "MT-000006",
+            "title": "Сканер теряет соединение во время комплектации",
+            "status": "in_progress",
+            "relation": "other",
+            "can_join": True,
+        }
+    ]
+    original = backend.call
+
+    async def call(method, path, telegram_id=None, **kwargs):
+        if path == "/similar":
+            backend.calls.append((method, path, telegram_id, deepcopy(kwargs)))
+            return similar
+        if path == "/appeals/6/support":
+            backend.calls.append((method, path, telegram_id, deepcopy(kwargs)))
+            return {"number": "MT-000006", "title": similar[0]["title"]}
+        return await original(method, path, telegram_id, **kwargs)
+
+    backend.call = call
+
+    async def scenario():
+        message = FakeMessage(text="Сканер отключается от wifi во время сборки заказа.")
+        await main.process_callback(query(message, "new:problem"))
+        await main.incoming(message)
+        text, options = message.answers[-1]
+        assert "Похоже, об этом уже сообщали" in text and "MT-000006" in text
+        buttons = [b.callback_data for row in options["reply_markup"].inline_keyboard for b in row]
+        assert buttons[0] == "join:6"
+        await main.process_callback(query(message, "join:6"))
+        assert backend.saved[message.from_user.id] == {}
+        assert "присоединились к MT-000006" in message.answers[-1][0]
+        assert not any(call[:2] == ("POST", "/appeals") for call in backend.calls)
+
+    asyncio.run(scenario())
+
+
+def test_similar_search_failure_does_not_block_preview(backend):
+    original = backend.call
+
+    async def call(method, path, telegram_id=None, **kwargs):
+        if path == "/similar":
+            raise main.BackendError("Сервис недоступен")
+        return await original(method, path, telegram_id, **kwargs)
+
+    backend.call = call
+
+    async def scenario():
+        message = FakeMessage(text="На складе не хватает маркировки полок.")
+        await main.process_callback(query(message, "new:problem"))
+        await main.incoming(message)
+        assert "Проверьте обращение" in message.answers[-1][0]
+        assert "Похоже" not in message.answers[-1][0]
+
+    asyncio.run(scenario())
+
+
+def test_voice_needs_consent_then_becomes_description(backend):
+    original = backend.call
+
+    async def call(method, path, telegram_id=None, **kwargs):
+        if path == "/ai/status":
+            return {"available": True, "mode": "openrouter", "voice": True}
+        if path == "/ai/transcribe":
+            backend.calls.append((method, path, telegram_id, deepcopy(kwargs)))
+            return {"text": "Сканер отключается от wifi во время сборки заказа"}
+        if path == "/similar":
+            return []
+        return await original(method, path, telegram_id, **kwargs)
+
+    backend.call = call
+
+    async def scenario():
+        message = FakeMessage()
+        await main.process_callback(query(message, "new:problem"))
+        message.voice = SimpleNamespace(file_id="voice-id", file_size=2048, mime_type="audio/ogg")
+        await main.incoming(message)
+        text, options = message.answers[-1]
+        assert "OpenRouter" in text
+        # Nothing leaves the bot before the explicit tap.
+        assert not any(call[1] == "/ai/transcribe" for call in backend.calls)
+        await main.process_callback(query(message, "voice-ok"))
+        draft = backend.saved[message.from_user.id]
+        assert draft["description"].startswith("Сканер отключается")
+        assert "pending_voice" not in draft and draft["voice"] is True
+        assert "Проверьте обращение" in message.answers[-1][0]
+        sent = next(call for call in backend.calls if call[1] == "/ai/transcribe")
+        assert sent[3]["files"]["file"][1] == b"file-bytes"
+
+    asyncio.run(scenario())
+
+
+def test_voice_reply_is_sent_only_after_confirmation(backend):
+    original = backend.call
+
+    async def call(method, path, telegram_id=None, **kwargs):
+        if path == "/ai/status":
+            return {"available": True, "mode": "openrouter", "voice": True}
+        if path == "/ai/transcribe":
+            return {"text": "Путают на второй полке слева"}
+        return await original(method, path, telegram_id, **kwargs)
+
+    backend.call = call
+
+    async def scenario():
+        message = FakeMessage()
+        await main.process_callback(query(message, "reply:17"))
+        message.voice = SimpleNamespace(file_id="voice-id", file_size=2048, mime_type="audio/ogg")
+        await main.incoming(message)
+        await main.process_callback(query(message, "voice-ok"))
+        assert not any(call[1] == "/appeals/17/messages" for call in backend.calls)
+        await main.process_callback(query(message, "voice-send"))
+        sent = next(call for call in backend.calls if call[1] == "/appeals/17/messages")
+        assert sent[3]["json"]["body"] == "Путают на второй полке слева"
+        assert backend.saved[message.from_user.id] == {}
+
+    asyncio.run(scenario())
+
+
+def test_voice_without_transcription_asks_for_text(backend):
+    async def scenario():
+        message = FakeMessage()
+        await main.process_callback(query(message, "new:problem"))
+        message.voice = SimpleNamespace(file_id="voice-id", file_size=2048, mime_type="audio/ogg")
+        await main.incoming(message)
+        assert "текстом" in message.answers[-1][0]
 
     asyncio.run(scenario())

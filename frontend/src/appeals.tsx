@@ -9,7 +9,7 @@ import {
 import { Input } from "./components/ui/input";
 import { Textarea } from "./components/ui/textarea";
 import { ToggleGroup, ToggleGroupItem } from "./components/ui/toggle-group";
-import { Plus, ArrowRight, MessageSquare, CheckCheck } from "lucide-react";
+import { Plus, ArrowRight, MessageSquare, CheckCheck, Paperclip } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
 import {
   Empty,
@@ -33,6 +33,15 @@ import type { ChangeEvent, FormEvent, MouseEvent } from "react";
 import { api } from "./api";
 import type { User } from "./api";
 import { navigate, usePath } from "./navigation";
+import { ApiError } from "./api";
+import {
+  SimilarAppeals,
+  SupportCard,
+  SupportedList,
+  colleagues,
+  joinedNotice,
+} from "./similar";
+import type { SupportView } from "./similar";
 
 export const categories = {
   warehouse: "Склад и логистика",
@@ -80,6 +89,7 @@ export type Summary = {
   next_response_at: string | null;
   created_at: string;
   attachment_count: number;
+  supporters: number;
 };
 type Attachment = {
   id: string;
@@ -99,6 +109,12 @@ export type Detail = Summary & {
   department: string;
   attachments: Attachment[];
   history: { id: string; actor: string; text: string; created_at: string }[];
+  supporters_list: {
+    name: string;
+    department: string;
+    comment: string;
+    created_at: string;
+  }[];
 };
 type Page = {
   items: Summary[];
@@ -485,6 +501,7 @@ function AppealList({ notice }: { notice: string }) {
               </TabsContent>
             </Tabs>
           </section>
+          <SupportedList />
         </>
       )}
     </section>
@@ -507,6 +524,7 @@ export function AppealCard({
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [supporter, setSupporter] = useState(false);
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -516,7 +534,11 @@ export function AppealCard({
         if (!cancelled) setAppeal(result);
       })
       .catch((error) => {
-        if (!cancelled) setError(error.message);
+        if (cancelled) return;
+        // Colleagues who joined get a limited card instead of the private one.
+        if (error instanceof ApiError && error.status === 404 && backPath === "/appeals")
+          setSupporter(true);
+        else setError(error.message);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -524,7 +546,20 @@ export function AppealCard({
     return () => {
       cancelled = true;
     };
-  }, [id, attempt]);
+  }, [id, attempt, backPath]);
+  if (supporter)
+    return (
+      <section className="appeal-detail">
+        <Button
+          variant="outline"
+          className="back-link"
+          onClick={() => navigate(backPath)}
+        >
+          ← Мои обращения
+        </Button>
+        <SupportCard id={id} notice={notice} />
+      </section>
+    );
   return (
     <section className="appeal-detail">
       <Button
@@ -769,7 +804,31 @@ export function AppealCard({
                   <dd>{appeal.company}</dd>
                   <dt>Подразделение</dt>
                   <dd>{appeal.department}</dd>
+                  {appeal.supporters > 0 && (
+                    <>
+                      <dt>Та же ситуация у коллег</dt>
+                      <dd>
+                        <span className="supporters-chip">
+                          +{appeal.supporters}
+                        </span>{" "}
+                        присоединились к обращению
+                      </dd>
+                    </>
+                  )}
                 </dl>
+                {appeal.supporters_list.length > 0 && (
+                  <ul className="supporters-list">
+                    {appeal.supporters_list.map((item) => (
+                      <li key={item.name + item.created_at}>
+                        <strong>{item.name}</strong>
+                        <span className="hint">
+                          {item.department} · {date(item.created_at)}
+                        </span>
+                        {item.comment && <p>{item.comment}</p>}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </aside>
             </div>
           </>
@@ -788,8 +847,10 @@ function AppealForm({
   sending,
   sendError,
   onCancel,
+  onJoined,
   user,
 }: {
+  onJoined: (view: SupportView) => void;
   draft: Draft;
   setDraft: (draft: Draft) => void;
   files: File[];
@@ -903,6 +964,13 @@ function AppealForm({
                 Автор: {user.name}. Компания и подразделение — из вашего
                 профиля.
               </p>
+              <SimilarAppeals
+                compact
+                title={draft.title}
+                description={draft.description}
+                kind={draft.kind}
+                onJoined={onJoined}
+              />
               <ErrorMessage message={sendError} />
               <div className="form-actions">
                 <Button
@@ -978,6 +1046,12 @@ function AppealForm({
                     </span>
                   </div>
                 </Field>
+                <SimilarAppeals
+                  title={draft.title || draft.description.slice(0, 160)}
+                  description={draft.description}
+                  kind={draft.kind}
+                  onJoined={onJoined}
+                />
                 <AIAssistant
                   kind={draft.kind}
                   description={draft.description}
@@ -1045,15 +1119,29 @@ function AppealForm({
                   <FieldLabel htmlFor="appeal-files">
                     Вложения <span className="optional">необязательно</span>
                   </FieldLabel>
-                  <Input
-                    id="appeal-files"
-                    type="file"
-                    multiple
-                    accept=".jpg,.jpeg,.png,.webp,.pdf"
-                    onChange={selectFiles}
-                    aria-invalid={!!fileError}
-                    aria-describedby="files-help"
-                  />
+                  {/* Native file inputs show the browser's own (often English) label: use our own control. */}
+                  <div className="file-picker">
+                    <input
+                      id="appeal-files"
+                      className="file-picker-input"
+                      type="file"
+                      multiple
+                      accept=".jpg,.jpeg,.png,.webp,.pdf"
+                      onChange={selectFiles}
+                      aria-invalid={!!fileError}
+                      aria-describedby="files-help"
+                      disabled={files.length >= 5}
+                    />
+                    <label htmlFor="appeal-files" className="file-picker-button">
+                      <Paperclip aria-hidden="true" />
+                      {files.length ? "Добавить ещё" : "Выбрать файлы"}
+                    </label>
+                    <span className="file-picker-status">
+                      {files.length
+                        ? `Выбрано: ${files.length} из 5`
+                        : "Файлы не выбраны"}
+                    </span>
+                  </div>
                   <FieldDescription id="files-help">
                     До 5 файлов по 10 МБ. Фото в JPEG, PNG, WebP или документ
                     PDF.
@@ -1182,6 +1270,12 @@ export function Appeals({ user }: { user: User }) {
           reset();
           setNotice("");
           navigate("/appeals");
+        }}
+        onJoined={(view) => {
+          reset();
+          setNoticeId(view.id);
+          setNotice(joinedNotice(view));
+          navigate(`/appeals/${view.id}`);
         }}
         user={user}
       />

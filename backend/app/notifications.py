@@ -6,7 +6,14 @@ from sqlalchemy import func, or_
 from sqlalchemy.dialects.postgresql import insert
 from sqlmodel import Session, select
 
-from app.models import Appeal, Experiment, Notification, User, utcnow
+from app.models import (
+    Appeal,
+    AppealSupporter,
+    Experiment,
+    Notification,
+    User,
+    utcnow,
+)
 from app.security import CurrentUser, Db
 
 router = APIRouter(prefix="/notifications", tags=["Notifications"])
@@ -57,16 +64,38 @@ def participants(db: Session, appeal: Appeal) -> set[UUID]:
     return {appeal.author_id} | managers
 
 
+# Colleagues who joined an appeal follow its official progress, not the private thread.
+SUPPORTER_KINDS = {
+    "assignment",
+    "start",
+    "resolve",
+    "reject",
+    "helped",
+    "reopen",
+    "experiment_started",
+    "experiment_finished",
+}
+
+
 def announce(
     db: Session, appeal: Appeal, kind: str, title: str, actor: UUID | None = None
 ):
+    recipients = participants(db, appeal)
+    if kind in SUPPORTER_KINDS:
+        recipients |= set(
+            db.exec(
+                select(AppealSupporter.user_id).where(
+                    AppealSupporter.appeal_id == appeal.id
+                )
+            ).all()
+        )
     emit(
         db,
         appeal,
         kind,
         title,
         f"{appeal.id}:{appeal.assignment_version}:{kind}",
-        participants(db, appeal),
+        recipients,
         actor,
     )
 
@@ -146,9 +175,25 @@ def visible(user: User):
         access = True
     elif "responsible" in user.roles:
         access = or_(access, Appeal.responsible_id == user.id)
+    if access is not True:
+        supported = select(AppealSupporter.appeal_id).where(
+            AppealSupporter.user_id == user.id
+        )
+        access = or_(
+            access,
+            Appeal.id.in_(supported) & Notification.kind.in_(SUPPORTER_KINDS),
+        )
     return (
         select(Notification).join(Appeal).where(Notification.user_id == user.id, access)
     )
+
+
+def link_prefix(appeal: Appeal, user: User) -> str:
+    """Authors and supporters open the employee card; staff open the queue card."""
+    staff = "coordinator" in user.roles or (
+        "responsible" in user.roles and appeal.responsible_id == user.id
+    )
+    return "queue" if staff and appeal.author_id != user.id else "appeals"
 
 
 @router.get("")
@@ -168,7 +213,7 @@ def listing(user: CurrentUser, db: Db, page: int = Query(1, ge=1)):
     items = []
     for item in rows:
         appeal = db.get(Appeal, item.appeal_id)
-        prefix = "appeals" if appeal.author_id == user.id else "queue"
+        prefix = link_prefix(appeal, user)
         items.append(
             {
                 "id": item.id,

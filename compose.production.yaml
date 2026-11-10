@@ -42,7 +42,7 @@ services:
     mem_limit: 32m
   frontend:
     <<: *runtime
-    image: irontech-frontend:${RELEASE_TAG:-v1}
+    image: irontech-frontend:${FRONTEND_RELEASE_TAG:-${RELEASE_TAG:-v1}}
     mem_limit: 48m
     depends_on:
       backend:

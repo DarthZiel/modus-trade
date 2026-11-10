@@ -202,11 +202,48 @@ async def help_command(message: Message):
     )
 
 
-async def preview(message, draft):
+async def similar_hint(uid, draft):
+    """Existing appeals with the same situation; a hint that never blocks filing."""
+    try:
+        items = await backend.call(
+            "POST",
+            "/similar",
+            uid,
+            json={
+                "title": draft["title"][:160],
+                "description": draft["description"][:2000],
+                "kind": draft["kind"],
+            },
+        )
+    except BackendError:
+        return "", []
+    if not isinstance(items, list) or not items:
+        return "", []
+    lines, rows = ["\n\nПохоже, об этом уже сообщали:"], []
+    for item in items[:3]:
+        status = STATUSES.get(item["status"], item["status"])
+        lines.append(f"• {item['number']} · {status} — {item['title'][:80]}")
+        if item.get("can_join"):
+            rows.append(
+                [(f"У меня то же — присоединиться к {item['number']}", f"join:{item['id']}")]
+            )
+        elif item.get("relation") == "own":
+            lines.append("  Это ваше обращение — дополните его ответом в карточке.")
+        elif item.get("relation") == "supported":
+            lines.append("  Вы уже присоединились к нему.")
+    lines.append(
+        "Присоединитесь вместо нового обращения — ответственный увидит, что это касается не только вас."
+    )
+    return "\n".join(lines), rows
+
+
+async def preview(message, draft, uid=None):
+    hint, join_rows = await similar_hint(uid, draft) if uid else ("", [])
     await message.answer(
-        f"Проверьте обращение\n\n{draft['title']}\n\n{draft['description'][:2900]}\n\nВложений: {len(draft.get('files', []))}. Категория: {draft.get('category', 'other')}.\nПолный текст сохранён; категорию и заголовок можно задать в Mini App.",
+        f"Проверьте обращение\n\n{draft['title']}\n\n{draft['description'][:2900]}\n\nВложений: {len(draft.get('files', []))}. Категория: {draft.get('category', 'other')}.\nПолный текст сохранён; категорию и заголовок можно задать в Mini App.{hint}",
         reply_markup=keyboard(
-            [
+            join_rows
+            + [
                 [
                     (
                         "Отправить обращение"
@@ -265,6 +302,96 @@ class LimitedBuffer(io.BytesIO):
         return super().write(data)
 
 
+async def send_reply(message, uid, draft, body):
+    """Reply or return-to-work comment for the appeal the user opened."""
+    if not 1 <= len(body) <= 10000:
+        raise BackendError("Отправьте текст от 1 до 10 000 символов.")
+    appeal_id = draft["appeal_id"]
+    payload = {
+        "client_id": str(
+            uuid5(NAMESPACE_URL, f"tg-message:{uid}:{draft.get('message_key', message.message_id)}")
+        )
+    }
+    if draft["mode"] == "reply":
+        await backend.call(
+            "POST",
+            f"/appeals/{appeal_id}/messages",
+            uid,
+            json={**payload, "body": body},
+        )
+    else:
+        await backend.call(
+            "POST",
+            f"/appeals/{appeal_id}/feedback",
+            uid,
+            json={
+                **payload,
+                "outcome": "reopen",
+                "comment": body,
+                "expected_version": draft["expected_version"],
+            },
+        )
+    await state(uid, {})
+    await message.answer(f"Ответ по MT-{appeal_id:06} сохранён.", reply_markup=menu())
+
+
+async def apply_description(message, uid, draft, description):
+    if not 10 <= len(description) <= 10000:
+        raise BackendError("Описание должно содержать от 10 до 10 000 символов.")
+    if draft.get("description") and not draft.get("editing"):
+        raise BackendError(
+            "Чтобы заменить описание, нажмите «Исправить» в предпросмотре."
+        )
+    draft.update(
+        description=description,
+        title=(
+            " ".join(description.split())[:160]
+            if len(" ".join(description.split())) >= 5
+            else "Обращение сотрудника"
+        ),
+        editing=False,
+    )
+
+
+async def ask_voice(message, uid, draft, voice):
+    """Voice goes to an external model only after an explicit tap."""
+    info = await backend.call("GET", "/ai/status", uid)
+    if not info.get("voice"):
+        raise BackendError(
+            "Голосовые пока не распознаются. Отправьте, пожалуйста, текстом."
+        )
+    if voice.file_size and voice.file_size > 4 * 1024 * 1024:
+        raise BackendError("Голосовое слишком длинное. Уложитесь в 2–3 минуты.")
+    draft["pending_voice"] = {
+        "file_id": voice.file_id,
+        "mime": getattr(voice, "mime_type", None) or "audio/ogg",
+        "key": message.message_id,
+    }
+    await state(uid, draft)
+    await message.answer(
+        "Расшифровать голосовое? Запись будет передана сервису OpenRouter и "
+        "провайдеру модели распознавания. Профиль и вложения не передаются.",
+        reply_markup=keyboard(
+            [[("Расшифровать", "voice-ok")], [("Напишу текстом", "voice-no")]]
+        ),
+    )
+
+
+async def transcribe_pending(message, uid, draft):
+    pending = draft.get("pending_voice")
+    if not pending:
+        raise BackendError("Голосовое не найдено. Отправьте его ещё раз.")
+    content = LimitedBuffer()
+    await message.bot.download(pending["file_id"], destination=content)
+    result = await backend.call(
+        "POST",
+        "/ai/transcribe",
+        uid,
+        files={"file": ("voice.ogg", content.getvalue(), pending["mime"])},
+    )
+    return result["text"], pending
+
+
 async def process_callback(query: CallbackQuery):
     uid = query.from_user.id
     message = query.message
@@ -284,7 +411,7 @@ async def process_callback(query: CallbackQuery):
             {"mode": "draft", "kind": kind, "submission_id": str(uuid4()), "files": []},
         )
         await message.answer(
-            "Опишите проблему или идею одним сообщением (от 10 до 10 000 символов). Затем можно добавить до 5 фото или документов PDF, JPG, PNG, WebP по 10 МБ. /cancel — отменить."
+            "Опишите проблему или идею одним сообщением — текстом или голосовым (от 10 до 10 000 символов). Затем можно добавить до 5 фото или документов PDF, JPG, PNG, WebP по 10 МБ. /cancel — отменить."
         )
     elif data.startswith("list:"):
         page = max(1, min(int(data.split(":")[1]), 100000))
@@ -367,7 +494,7 @@ async def process_callback(query: CallbackQuery):
         if data == "clear-files":
             draft["files"] = []
             await state(uid, draft)
-        await preview(message, draft)
+        await preview(message, draft, uid)
     elif data == "cancel":
         await state(uid, {})
         await message.answer("Черновик отменён.", reply_markup=menu())
@@ -410,7 +537,7 @@ async def process_callback(query: CallbackQuery):
             )
             draft["mode"] = "draft"
             await state(uid, draft)
-            await preview(message, draft)
+            await preview(message, draft, uid)
         elif proposal["questions"]:
             draft.update(mode="ai_answers", ai_answers=[])
             await state(uid, draft)
@@ -418,6 +545,54 @@ async def process_callback(query: CallbackQuery):
                 proposal["questions"][0]
                 + "\n/cancel — отменить черновик; кнопка «Оставить мой текст» вернёт предпросмотр."
             )
+    elif data == "voice-no":
+        draft = await state(uid)
+        draft.pop("pending_voice", None)
+        await state(uid, draft)
+        await message.answer("Хорошо, отправьте описание текстом.")
+    elif data == "voice-ok":
+        draft = await state(uid)
+        await message.answer("Расшифровываю…")
+        text, pending = await transcribe_pending(message, uid, draft)
+        draft.pop("pending_voice", None)
+        if draft.get("mode") == "draft":
+            await apply_description(message, uid, draft, text)
+            draft["voice"] = True
+            await state(uid, draft)
+            await message.answer(f"Распознал голосовое:\n«{text[:1500]}»")
+            await preview(message, draft, uid)
+        elif draft.get("mode") in {"reply", "reopen"}:
+            draft.update(voice_text=text, message_key=f"voice-{pending['key']}")
+            await state(uid, draft)
+            await message.answer(
+                f"Распознал:\n«{text[:1500]}»\n\nОтправить как ответ по MT-{draft['appeal_id']:06}?",
+                reply_markup=keyboard(
+                    [[("Отправить ответ", "voice-send")], [("Напишу текстом", "voice-no")]]
+                ),
+            )
+        else:
+            raise BackendError("Сначала выберите действие в меню.")
+    elif data == "voice-send":
+        draft = await state(uid)
+        if draft.get("mode") not in {"reply", "reopen"} or not draft.get("voice_text"):
+            raise BackendError("Эта кнопка устарела. Откройте обращение заново.")
+        await send_reply(message, uid, draft, draft["voice_text"])
+    elif data.startswith("join:"):
+        appeal_id = int(data.split(":")[1])
+        draft = await state(uid)
+        view = await backend.call(
+            "POST", f"/appeals/{appeal_id}/support", uid, json={"comment": ""}
+        )
+        if draft.get("mode") == "draft":
+            await state(uid, {})
+        await message.answer(
+            f"Вы присоединились к {view['number']}: «{view['title']}».\n"
+            "Черновик не отправлен — дубль не нужен. Мы сообщим, когда обращение "
+            "примут в работу и когда появится результат.",
+            reply_markup=InlineKeyboardMarkup(
+                inline_keyboard=[[app_button(f"/appeals/{appeal_id}")]]
+            ),
+        )
     elif data == "edit":
         draft = await state(uid)
         if draft.get("mode") != "draft":
@@ -484,6 +659,18 @@ async def incoming(message: Message):
         try:
             draft = await state(uid)
             mode = draft.get("mode")
+            voice = message.voice or message.audio
+            if voice:
+                if mode not in {"draft", "reply", "reopen"}:
+                    raise BackendError(
+                        "Сначала выберите действие: «Сообщить о проблеме», «Предложить идею» или ответ в карточке."
+                    )
+                if mode == "draft" and draft.get("description") and not draft.get("editing"):
+                    raise BackendError(
+                        "Чтобы заменить описание голосом, нажмите «Исправить» в предпросмотре."
+                    )
+                await ask_voice(message, uid, draft, voice)
+                return
             if mode == "ai_answers":
                 body = (message.text or "").strip()
                 if not 1 <= len(body) <= 2000:
@@ -501,38 +688,8 @@ async def incoming(message: Message):
                     await ai_proposal(message, uid, draft)
                 return
             if mode in {"reply", "reopen"}:
-                body = (message.text or "").strip()
-                if not 1 <= len(body) <= 10000:
-                    raise BackendError("Отправьте текст от 1 до 10 000 символов.")
-                appeal_id = draft["appeal_id"]
-                payload = {
-                    "client_id": str(
-                        uuid5(NAMESPACE_URL, f"tg-message:{uid}:{message.message_id}")
-                    )
-                }
-                if mode == "reply":
-                    await backend.call(
-                        "POST",
-                        f"/appeals/{appeal_id}/messages",
-                        uid,
-                        json={**payload, "body": body},
-                    )
-                else:
-                    await backend.call(
-                        "POST",
-                        f"/appeals/{appeal_id}/feedback",
-                        uid,
-                        json={
-                            **payload,
-                            "outcome": "reopen",
-                            "comment": body,
-                            "expected_version": draft["expected_version"],
-                        },
-                    )
-                await state(uid, {})
-                await message.answer(
-                    f"Ответ по MT-{appeal_id:06} сохранён.", reply_markup=menu()
-                )
+                draft.pop("message_key", None)
+                await send_reply(message, uid, draft, (message.text or "").strip())
                 return
             if mode != "draft":
                 await message.answer(
@@ -541,24 +698,7 @@ async def incoming(message: Message):
                 )
                 return
             if message.text:
-                description = message.text.strip()
-                if not 10 <= len(description) <= 10000:
-                    raise BackendError(
-                        "Описание должно содержать от 10 до 10 000 символов."
-                    )
-                if draft.get("description") and not draft.get("editing"):
-                    raise BackendError(
-                        "Чтобы заменить описание, нажмите «Исправить» в предпросмотре."
-                    )
-                draft.update(
-                    description=description,
-                    title=(
-                        " ".join(description.split())[:160]
-                        if len(" ".join(description.split())) >= 5
-                        else "Обращение сотрудника"
-                    ),
-                    editing=False,
-                )
+                await apply_description(message, uid, draft, message.text.strip())
             elif message.photo or message.document:
                 if not draft.get("description"):
                     raise BackendError(
@@ -588,10 +728,10 @@ async def incoming(message: Message):
                 )
             else:
                 raise BackendError(
-                    "Поддерживаются текст, фото и документы PDF, JPG, PNG, WebP."
+                    "Поддерживаются текст, голосовые, фото и документы PDF, JPG, PNG, WebP."
                 )
             await state(uid, draft)
-            await preview(message, draft)
+            await preview(message, draft, uid)
         except BackendError as error:
             await message.answer(str(error))
 

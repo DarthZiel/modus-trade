@@ -18,3 +18,13 @@ uploads/
 
 # Temporary chart export workspaces
 .chart-data-*/
+
+# Not part of the service: media for the pitch, reference videos, AI design-tool state
+artifacts/
+*.mp4
+*.pptx
+.agents/
+.impeccable/
+skills-lock.json
+.claude/
+.DS_Store

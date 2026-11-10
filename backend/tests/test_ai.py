@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from app import ai
 from app.config import settings
 from app.database import engine
@@ -136,3 +138,81 @@ def test_openai_contract_does_not_send_profile_or_store_response(team, monkeypat
     assert captured["store"] is False
     assert "author@example.com" not in str(captured)
     assert "attachments" not in str(captured)
+
+
+def test_reply_assist_is_staff_only_and_uses_the_thread(team, monkeypatch):
+    from tests.test_work_queue import assign
+
+    monkeypatch.setattr(settings, "ai_provider", "demo")
+    appeal_id = team["appeal"]["id"]
+    path = f"/ai/appeals/{appeal_id}/reply"
+    assert team["author"].post(path).status_code == 403
+    assert team["first"].post(path).status_code == 404
+    assign(team)
+    team["author"].post(
+        f"/appeals/{appeal_id}/messages",
+        json={"client_id": str(uuid4()), "body": "Чаще всего путают у второго стеллажа"},
+    )
+    result = team["first"].post(path)
+    assert result.status_code == 200, result.text
+    data = result.json()
+    assert data["mode"] == "demo" and data["messages_used"] == 1
+    assert any("второго стеллажа" in line for line in data["suggestion"]["summary"])
+    # The assistant never sends anything by itself.
+    messages = team["first"].get(f"/appeals/{appeal_id}/messages").json()["items"]
+    assert len(messages) == 1
+
+
+def test_reply_assist_rejects_invented_numbers_and_sends_no_profile(team, monkeypatch):
+    from tests.test_work_queue import assign
+
+    assign(team)
+    seen = {}
+
+    def fake(schema, payload, instruction):
+        seen.update(payload)
+        return ai.ReplySuggestion(
+            summary=["Коробки путают при отгрузке"],
+            next_step="Уточнить, на каком стеллаже",
+            draft="Сделаем всё за 3 дня, обещаю.",
+        )
+
+    monkeypatch.setattr(settings, "ai_provider", "openrouter")
+    monkeypatch.setattr(ai, "generate", fake)
+    response = team["first"].post(f"/ai/appeals/{team['appeal']['id']}/reply")
+    assert response.status_code == 503
+    assert "author@example.com" not in str(seen) and "Сотрудник" not in str(seen)
+    assert seen["title"] == team["appeal"]["title"]
+
+
+def test_voice_transcription_contract(team, monkeypatch):
+    path = "/ai/transcribe"
+    voice = {"file": ("voice.ogg", b"OggS-fake-audio", "audio/ogg")}
+    monkeypatch.setattr(settings, "ai_provider", "demo")
+    assert team["author"].get("/ai/status").json()["voice"] is False
+    assert team["author"].post(path, files=voice).status_code == 503
+
+    monkeypatch.setattr(settings, "ai_provider", "openrouter")
+    monkeypatch.setattr(settings, "openrouter_api_key", SecretStr("test-key"))
+    seen = {}
+
+    def fake(data, audio_format):
+        seen.update(data=data, format=audio_format)
+        return "  Сканер   отключается от wifi во время сборки заказа  "
+
+    monkeypatch.setattr(ai, "transcribe_audio", fake)
+    assert team["author"].get("/ai/status").json()["voice"] is True
+    result = team["author"].post(path, files=voice)
+    assert result.status_code == 200, result.text
+    assert result.json()["text"] == "Сканер отключается от wifi во время сборки заказа"
+    assert seen == {"data": b"OggS-fake-audio", "format": "ogg"}
+    image = {"file": ("x.png", b"png", "image/png")}
+    assert team["author"].post(path, files=image).status_code == 415
+    monkeypatch.setattr(ai, "transcribe_audio", lambda *_: "")
+    assert team["author"].post(path, files=voice).status_code == 422
+
+    def broken(*_):
+        raise ValueError("provider down")
+
+    monkeypatch.setattr(ai, "transcribe_audio", broken)
+    assert team["author"].post(path, files=voice).status_code == 503

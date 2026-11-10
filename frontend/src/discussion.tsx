@@ -27,6 +27,7 @@ import type { FormEvent } from "react";
 import { api, ApiError } from "./api";
 import type { User } from "./api";
 import type { Detail } from "./appeals";
+import { ReplyAssistant } from "./reply-assistant";
 
 type Message = {
   id: number;
@@ -226,6 +227,22 @@ export function Conversation({
               )}
         </div>
       )}
+      {(user.roles.includes("coordinator") ||
+        (user.roles.includes("responsible") &&
+          appeal.responsible_id === user.id)) &&
+        appeal.author_id !== user.id &&
+        !["closed", "rejected"].includes(appeal.status) && (
+          <ReplyAssistant
+            appealId={appeal.id}
+            onInsert={(text) => {
+              setBody(text);
+              setError("");
+              requestAnimationFrame(() =>
+                document.getElementById("message-body")?.focus(),
+              );
+            }}
+          />
+        )}
       <form onSubmit={send} className="message-composer" aria-busy={busy}>
         <Field data-invalid={!!error}>
           <FieldLabel htmlFor="message-body">

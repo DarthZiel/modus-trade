@@ -23,7 +23,7 @@ from app.models import (
     User,
     utcnow,
 )
-from app.notifications import visible
+from app.notifications import link_prefix, visible
 from app.schemas import UserPublic
 from app.security import (
     CurrentUser,
@@ -292,7 +292,7 @@ def deliveries(db: Db) -> list[Delivery]:
         item.telegram_lease_until = now + timedelta(minutes=5)
         db.add(item)
         appeal = db.get(Appeal, item.appeal_id)
-        prefix = "appeals" if appeal.author_id == user.id else "queue"
+        prefix = link_prefix(appeal, user)
         result.append(
             Delivery(
                 id=item.id,

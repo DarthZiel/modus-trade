@@ -11,6 +11,7 @@ import { TelegramSettings, loginFromTelegram } from "./telegram";
 import { Notifications } from "./notifications";
 import { WorkQueue } from "./work-queue";
 import { Appeals } from "./appeals";
+import { Impact } from "./impact";
 import { navigate, usePath } from "./navigation";
 import { StrictMode, useEffect, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
@@ -975,6 +976,7 @@ function App() {
                   aria-current={
                     !path.startsWith("/team") &&
                     !path.startsWith("/queue") &&
+                    !path.startsWith("/impact") &&
                     !path.startsWith("/settings")
                       ? "page"
                       : undefined
@@ -991,6 +993,13 @@ function App() {
                   {user.roles.includes("coordinator")
                     ? "Очередь обращений"
                     : "Назначенные мне"}
+                </Button>
+                <Button
+                  variant="outline"
+                  aria-current={path.startsWith("/impact") ? "page" : undefined}
+                  onClick={() => navigate("/impact")}
+                >
+                  Эффект
                 </Button>
                 {user.roles.includes("coordinator") && (
                   <Button
@@ -1026,6 +1035,10 @@ function App() {
               (user.roles.includes("coordinator") ||
                 user.roles.includes("responsible")) ? (
               <WorkQueue user={user} />
+            ) : path === "/impact" &&
+              (user.roles.includes("coordinator") ||
+                user.roles.includes("responsible")) ? (
+              <Impact user={user} />
             ) : (
               <Appeals user={user} />
             )}

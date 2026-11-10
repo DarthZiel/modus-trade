@@ -20,6 +20,7 @@ from app.appeal_schemas import (
     EventPublic,
     FeedbackPublic,
     ListFilter,
+    SupporterPublic,
 )
 from app.config import settings
 from app.models import (
@@ -27,6 +28,7 @@ from app.models import (
     AppealAttachment,
     AppealEvent,
     AppealFeedback,
+    AppealSupporter,
     Company,
     Department,
     User,
@@ -81,6 +83,11 @@ def summary(appeal: Appeal, db, attachment_count: int) -> AppealSummary:
         next_response_at=appeal.next_response_at,
         created_at=appeal.created_at,
         attachment_count=attachment_count,
+        supporters=db.exec(
+            select(func.count())
+            .select_from(AppealSupporter)
+            .where(AppealSupporter.appeal_id == appeal.id)
+        ).one(),
     )
 
 
@@ -123,6 +130,19 @@ def detail(appeal: Appeal, db) -> AppealDetail:
                 select(AppealFeedback)
                 .where(AppealFeedback.appeal_id == appeal.id)
                 .order_by(AppealFeedback.created_at, AppealFeedback.id)
+            ).all()
+        ],
+        supporters_list=[
+            SupporterPublic(
+                name=(person := db.get(User, item.user_id)).name,
+                department=db.get(Department, person.department_id).name,
+                comment=item.comment,
+                created_at=item.created_at,
+            )
+            for item in db.exec(
+                select(AppealSupporter)
+                .where(AppealSupporter.appeal_id == appeal.id)
+                .order_by(AppealSupporter.created_at)
             ).all()
         ],
         history=[
