@@ -1,15 +1,19 @@
 # Modus Feedback
 
-Production на одном VPS Basic-2: [deploy/README.md](deploy/README.md),
-отдельный `compose.production.yaml`, Caddy/HTTPS и архивы релизов.
-
-Лендинг команды Iron Tech для `iron-tech.kz` находится отдельно в `landing/`.
-Запуск: `cd landing && npm ci && npm run dev`; подробности —
-[landing/README.md](landing/README.md). Сервис обратной связи остаётся в
-`frontend/` и готовится к размещению на `feedback.iron-tech.kz`.
-
 MVP системы обратной связи сотрудников «Модус Трейд».
 Требования и границы проекта: [MVP_SPEC.md](MVP_SPEC.md).
+
+## Опубликованные сайты
+
+- [Modus Feedback](https://feedback.iron-tech.kz/) — работающий сервис обратной
+  связи; исходники интерфейса находятся в `frontend/`. Для входа необходима
+  учётная запись.
+- [Iron Tech](https://iron-tech.kz/) — сайт команды и портфолио проектов;
+  исходники находятся в `landing/`. Локальный запуск и подробности описаны в
+  [landing/README.md](landing/README.md).
+
+Оба сайта развёрнуты на VPS с HTTPS. Конфигурация и инструкции по развёртыванию —
+в [deploy/README.md](deploy/README.md) и `compose.production.yaml`.
 
 ## Быстрый запуск
 
